@@ -6,7 +6,7 @@ from discord import TextStyle
 from discord.ui import Modal, TextInput
 from Interface.ApplicationButtons import ApplicationButtons
 
-class ApplicationModal(Modal, title="Ravenguard PMC Application Form"):
+class ApplicationModal(Modal, title="Task Force Application Form"):
     def __init__(self):
         super().__init__(timeout=None)
     
@@ -20,7 +20,7 @@ class ApplicationModal(Modal, title="Ravenguard PMC Application Form"):
         self.question_two = TextInput(
             label="Desired Callsign?",
             style=TextStyle.short,
-            placeholder="e.g Fox, Jay, Andy, Eclipse, etc",
+            placeholder="e.g Fox, Whisp, Pallas, Decryption, etc",
             required=True
         )
 
@@ -45,9 +45,9 @@ class ApplicationModal(Modal, title="Ravenguard PMC Application Form"):
 
     async def on_submit(self, interaction: discord.Interaction):
         application_embed = discord.Embed(
-            title="Ravenguard Application",
-            description="Thanks for applying for Ravenguard! Please be patient, one of the HiCOM will review your application shortly.",
-            color=config.RAVEN_RED,
+            title="Task Force \"Conquerors\" Application",
+            description="Thanks for applying for Task Force \"Conquerors\"! Please be patient, one of the HiCOM will review your application shortly.",
+            color=config.TFC_GOLD,
             timestamp=datetime.datetime.now()
         )
         application_embed.add_field(
@@ -77,7 +77,7 @@ class ApplicationModal(Modal, title="Ravenguard PMC Application Form"):
             value=f"> {self.question_four.value}",
             inline=False
         )
-        application_embed.set_thumbnail(url=config.RAVEN_ICON)
+        application_embed.set_thumbnail(url=config.TFC_ICON)
 
         application_channel = interaction.guild.get_channel(config.APPLICATION_CHANNEL_ID)
 
