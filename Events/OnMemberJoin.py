@@ -10,8 +10,11 @@ class OnMemberJoinEvent(commands.Cog):
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
         for id in config.WELCOME_ROLE_IDS:
-            role = member.guild.get_role(id)
-            await member.add_roles(role)
+            try:
+                role = member.guild.get_role(id)
+                await member.add_roles(role)
+            except:
+                pass
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(OnMemberJoinEvent(bot))

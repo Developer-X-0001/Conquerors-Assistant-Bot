@@ -19,7 +19,7 @@ class ApplicationButtons(View):
             await interaction.response.edit_message(view=self)
 
             application_embed = interaction.message.embeds[0]
-            callsign = application_embed.fields[2].value[2:]
+            callsign = application_embed.fields[3].value[2:]
             user = interaction.message.mentions[0]
 
             verified_role = interaction.guild.get_role(config.VERIFIED_ROLE_ID)

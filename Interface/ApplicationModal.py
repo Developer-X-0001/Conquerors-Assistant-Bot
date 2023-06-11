@@ -11,37 +11,46 @@ class ApplicationModal(Modal, title="Task Force Application Form"):
         super().__init__(timeout=None)
     
         self.question_one = TextInput(
-            label="What server or member you joined from?",
+            label="Your Roblox username?",
+            style=TextStyle.short,
+            required=True
+        )
+
+        self.question_two = TextInput(
+            label="Where did you join from?",
             style=TextStyle.short,
             placeholder="e.g PlatinumFive, Developer X#0001, etc",
             required=True
         )
 
-        self.question_two = TextInput(
-            label="Desired Callsign?",
-            style=TextStyle.short,
-            placeholder="e.g Fox, Whisp, Pallas, Decryption, etc",
-            required=True
-        )
-
         self.question_three = TextInput(
-            label="Your Playstyle?",
+            label="Desired callsign?",
             style=TextStyle.short,
-            placeholder="e.g Marksman, Pilot, CQB, etc",
+            placeholder="Type only one word no spaces...",
             required=True
         )
 
         self.question_four = TextInput(
-            label="Timezone?",
+            label="Most active time-zone?",
             style=TextStyle.short,
             placeholder="e.g GMT, EST, PST, etc",
             required=True
+        )
+
+        self.question_five = TextInput(
+            label="Do you agree to our rules?",
+            style=TextStyle.short,
+            placeholder="Type Y or N",
+            required=True,
+            min_length=1,
+            max_length=1
         )
 
         self.add_item(self.question_one)
         self.add_item(self.question_two)
         self.add_item(self.question_three)
         self.add_item(self.question_four)
+        self.add_item(self.question_five)
 
     async def on_submit(self, interaction: discord.Interaction):
         application_embed = discord.Embed(
@@ -58,23 +67,28 @@ class ApplicationModal(Modal, title="Task Force Application Form"):
             inline=False
         )
         application_embed.add_field(
-            name="{} What server or member you joined from?".format(config.ARROW_EMOJI),
+            name="{} Your Roblox username?".format(config.ARROW_EMOJI),
             value=f"> {self.question_one.value}",
             inline=False
         )
         application_embed.add_field(
-            name="{} Desired Callsign?".format(config.ARROW_EMOJI),
+            name="{} Where did you join from?".format(config.ARROW_EMOJI),
             value=f"> {self.question_two.value}",
             inline=False
         )
         application_embed.add_field(
-            name="{} Your Playstyle?".format(config.ARROW_EMOJI),
+            name="{} Desired callsign?".format(config.ARROW_EMOJI),
             value=f"> {self.question_three.value}",
             inline=False
         )
         application_embed.add_field(
-            name="{} Timezone?".format(config.ARROW_EMOJI),
+            name="{} Most active time-zone?".format(config.ARROW_EMOJI),
             value=f"> {self.question_four.value}",
+            inline=False
+        )
+        application_embed.add_field(
+            name="{} Do you understand the rules that are inplace, and do you understand that breaking them will lead to punishments at the discretion of officers?".format(config.ARROW_EMOJI),
+            value=f"> {self.question_five.value}",
             inline=False
         )
         application_embed.set_thumbnail(url=config.TFC_ICON)
