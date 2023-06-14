@@ -1,5 +1,6 @@
 import config
 import discord
+import datetime
 
 from discord import ButtonStyle
 from discord.ui import Button, View, button
@@ -11,6 +12,7 @@ class ApplicationButtons(View):
     @button(label="Accept", emoji=config.DONE_EMOJI, style=ButtonStyle.gray, custom_id="accept_button")
     async def accept_button(self, interaction: discord.Interaction, button: Button):
         bot_operator_role = interaction.guild.get_role(config.BOT_OPERATOR_ROLE_ID)
+        logs_channel = interaction.guild.get_channel(config.APPLICATION_LOGS_CHANNEL_ID)
         if bot_operator_role in interaction.user.roles:
             self.accept_button.label = "Please Wait"
             self.accept_button.emoji = config.LOAD_EMOJI
@@ -43,6 +45,7 @@ class ApplicationButtons(View):
 
             application_embed.set_footer(text="Application accepted!")
             await interaction.message.edit(embed=application_embed, view=self)
+            await logs_channel.send(embed=discord.Embed(description="{} has accepted {}'s application.".format(interaction.user.mention, interaction.message.mentions[0].mention), color=config.TFC_GOLD, timestamp=datetime.datetime.now()))
         else:
             await interaction.response.send_message(embed=discord.Embed(description="{} **You aren't authorized to do that!**".format(config.ERROR_EMOJI), color=config.TFC_GOLD), ephemeral=True)
             return
@@ -50,6 +53,7 @@ class ApplicationButtons(View):
     @button(label="Reject", emoji=config.ERROR_EMOJI, style=ButtonStyle.gray, custom_id="reject_button")
     async def reject_button(self, interaction: discord.Interaction, button: Button):
         bot_operator_role = interaction.guild.get_role(config.BOT_OPERATOR_ROLE_ID)
+        logs_channel = interaction.guild.get_channel(config.APPLICATION_LOGS_CHANNEL_ID)
         if bot_operator_role in interaction.user.roles:
             application_embed = interaction.message.embeds[0]
             self.accept_button.disabled = True
@@ -59,6 +63,7 @@ class ApplicationButtons(View):
 
             application_embed.set_footer(text="Application rejected!")
             await interaction.response.edit_message(embed=application_embed, view=self)
+            await logs_channel.send(embed=discord.Embed(description="{} has rejected {}'s application.".format(interaction.user.mention, interaction.message.mentions[0].mention), color=config.TFC_GOLD, timestamp=datetime.datetime.now()))
         else:
             await interaction.response.send_message(embed=discord.Embed(description="{} **You aren't authorized to do that!**".format(config.ERROR_EMOJI), color=config.TFC_GOLD), ephemeral=True)
             return

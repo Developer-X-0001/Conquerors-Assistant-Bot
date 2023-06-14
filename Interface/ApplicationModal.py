@@ -13,6 +13,7 @@ class ApplicationModal(Modal, title="Task Force Application Form"):
         self.question_one = TextInput(
             label="Your Roblox username?",
             style=TextStyle.short,
+            placeholder="Type your roblox username not displayname...",
             required=True
         )
 
