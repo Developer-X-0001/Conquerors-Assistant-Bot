@@ -7,15 +7,16 @@ from discord.ui import Modal, TextInput
 from Interface.ApplicationButtons import ApplicationButtons
 
 class ApplicationModal(Modal, title="Task Force Application Form"):
-    def __init__(self):
+    def __init__(self, username: str):
+        self.username = username
         super().__init__(timeout=None)
     
-        self.question_one = TextInput(
-            label="Your Roblox username?",
-            style=TextStyle.short,
-            placeholder="Type your roblox username not displayname...",
-            required=True
-        )
+        # self.question_one = TextInput(
+        #     label="Your Roblox username?",
+        #     style=TextStyle.short,
+        #     placeholder="Type your roblox username not displayname...",
+        #     required=True
+        # )
 
         self.question_two = TextInput(
             label="Where did you join from?",
@@ -47,13 +48,21 @@ class ApplicationModal(Modal, title="Task Force Application Form"):
             max_length=1
         )
 
-        self.add_item(self.question_one)
+        # self.add_item(self.question_one)
         self.add_item(self.question_two)
         self.add_item(self.question_three)
         self.add_item(self.question_four)
         self.add_item(self.question_five)
 
     async def on_submit(self, interaction: discord.Interaction):
+        if ' ' in self.question_three.value:
+            await interaction.response.send_message(embed=discord.Embed(description="{} Unable to process application!\n\n**Reason:** Invalid callsign format.".format(config.ERROR_EMOJI), color=discord.Color.red()).set_footer(text="Callsign must be only one word with no spaces"), ephemeral=True)
+            return
+        
+        if self.question_five.value.upper() != 'Y' or self.question_five.value.upper() != 'N':
+            await interaction.response.send_message(embed=discord.Embed(description="{} Unable to process application!\n\n**Reason:** Invalid character typed for agreeing to our rules.".format(config.ERROR_EMOJI), color=discord.Color.red()).set_footer(text="Only answer with 'Y' or 'N'"), ephemeral=True)
+            return
+
         application_embed = discord.Embed(
             title="Task Force \"Conquerors\" Application",
             description="Thanks for applying for Task Force \"Conquerors\"! Please be patient, one of the HiCOM will review your application shortly.",
@@ -69,7 +78,7 @@ class ApplicationModal(Modal, title="Task Force Application Form"):
         )
         application_embed.add_field(
             name="{} Your Roblox username?".format(config.ARROW_EMOJI),
-            value=f"> {self.question_one.value}",
+            value=f"> {self.username}",
             inline=False
         )
         application_embed.add_field(
