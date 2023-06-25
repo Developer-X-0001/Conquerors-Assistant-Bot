@@ -59,7 +59,7 @@ class ApplicationModal(Modal, title="Task Force Application Form"):
             await interaction.response.send_message(embed=discord.Embed(description="{} Unable to process application!\n\n**Reason:** Invalid callsign format.".format(config.ERROR_EMOJI), color=discord.Color.red()).set_footer(text="Callsign must be only one word with no spaces"), ephemeral=True)
             return
         
-        if self.question_five.value.upper() != 'Y' or self.question_five.value.upper() != 'N':
+        if self.question_five.value.lower() != 'y' and self.question_five.value.lower() != 'n':
             await interaction.response.send_message(embed=discord.Embed(description="{} Unable to process application!\n\n**Reason:** Invalid character typed for agreeing to our rules.".format(config.ERROR_EMOJI), color=discord.Color.red()).set_footer(text="Only answer with 'Y' or 'N'"), ephemeral=True)
             return
 
