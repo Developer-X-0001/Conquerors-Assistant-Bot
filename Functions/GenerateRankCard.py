@@ -1,44 +1,44 @@
 import discord
 
-from easy_pil import Editor, Font, load_image
+from easy_pil import Canvas, Editor, Font, Text, font, load_image
 
-def generate_rank_card(member: discord.Member):
-    background = Editor("Assets/wlcbg.jpg")
-    profile = Editor("Assets/pfp.png").resize((150, 150)).circle_image()
+def generate_rank_card(user: discord.Member):
 
-    # To use users profile picture load it from url
-    # using the load_image/load_image_async function
-    profile_image = load_image(str(member.display_icon.url))
-    profile = Editor(profile_image).resize((150, 150)).circle_image()
+    background = Editor(Canvas((900, 270)))
+    # profile = Editor("assets/pfp.png").resize((200, 200)).circle_image()
+
+    # For profile to use users profile picture load it from url using the load_image/load_image_async function
+    profile_image = load_image(str(user.avatar.url))
+    profile = Editor(profile_image).resize((200, 200)).circle_image()
 
 
-    # Fonts
-    poppins = Font.poppins(size=50, variant="bold")
-    poppins_small = Font.poppins(size=25, variant="regular")
-    poppins_light = Font.poppins(size=20, variant="light")
+    # Fonts to use with different size
+    poppins_big = Font.poppins(variant="bold", size=50)
+    poppins_mediam = Font.poppins(variant="bold", size=40)
+    poppins_regular = Font.poppins(variant="regular", size=30)
+    poppins_thin = Font.poppins(variant="light", size=18)
 
-    background.paste(profile, (325, 90))
-    background.ellipse((325, 90), 150, 150, outline="gold", stroke_width=4)
+    card_left_shape = [(0, 0), (0, 270), (330, 270), (260, 0)]
+
+    background.rectangle((0,0), width=900, height=270, color="#23272a")
+    background.polygon(card_left_shape, "#2C2F33")
+    background.paste(profile, (40, 35))
+    background.ellipse((40, 35), 200, 200, outline="#d7b369", stroke_width=3)
+    background.text((600, 30), "WELCOME", font=poppins_big, color="#d7b369", align="center")
     background.text(
-        (400, 260),
-        "WELCOME",
-        color="white",
-        font=poppins,
-        align="center",
-        stroke_width=2,
+        (600, 80), user.name, font=poppins_regular, color="white", align="center"
     )
     background.text(
-        (400, 325),
-        "Shahriyar#9770",
-        color="white",
-        font=poppins_small,
-        align="center",
+        (600, 130), "YOU ARE MEMBER", font=poppins_mediam, color="#d7b369", align="center"
     )
     background.text(
-        (400, 360),
-        "You are the 457th Member",
-        color="#0BE7F5",
-        font=poppins_small,
+        (600, 170), f"NO. {user.guild.member_count}", font=poppins_regular, color="white", align="center"
+    )
+    background.text(
+        (620, 235),
+        "THANK YOU FOR JOINING. HOPE YOU WILL ENJOY YOUR STAY",
+        font=poppins_thin,
+        color="white",
         align="center",
     )
 

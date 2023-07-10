@@ -39,7 +39,7 @@ class ApplicationButtons(View):
             await user.add_roles(recruit_role)
             await user.add_roles(recruitment_element_orion_role)
             await user.add_roles(clearance_level_0_role)
-            await user.edit(nick="[C-0] REC. {}".format(callsign))
+            await user.edit(nick="[E-0] REC. \"{}\"".format(callsign))
 
             self.accept_button.disabled = True
             self.reject_button.disabled = True

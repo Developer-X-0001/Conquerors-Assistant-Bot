@@ -6,6 +6,7 @@ import requests
 from discord.ext import commands
 from discord import app_commands
 from Interface.ApplicationModal import ApplicationModal
+from Interface.ErrorReportView import ReportButtonView
 
 class Application(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -24,7 +25,7 @@ class Application(commands.Cog):
             await interaction.response.send_modal(ApplicationModal(username=data['cachedUsername']))
             
         else:
-            await interaction.response.send_message(embed=discord.Embed(description="{} **Something went wrong!**\n\n**Error Code:** `{}`".format(config.ERROR_EMOJI, response.status_code), color=discord.Color.red()).set_footer(text="Please report the issue along side the error code."), ephemeral=True)
+            await interaction.response.send_message(embed=discord.Embed(description="{} **Something went wrong!**\n\n**Error Code:** `{}`".format(config.ERROR_EMOJI, response.status_code), color=discord.Color.red()).set_footer(text="Please report the issue along side the error code."), view=ReportButtonView(), ephemeral=True)
     
     @apply.error
     async def apply_error(self, interaction: discord.Interaction, error: app_commands.errors):

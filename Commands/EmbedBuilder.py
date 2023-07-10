@@ -1090,9 +1090,10 @@ class MessageMaker(commands.Cog):
 
     # --------EmbedBuilder Command--------
     @app_commands.command(name="embed-builder", description="Create highly customizable embeds.")
+    @app_commands.checks.has_permissions(administrator=True)
     async def messagemaker(self, interaction: discord.Interaction):
         view = BaseView(interaction, self.session)
-        await interaction.response.send_message(view.content, view=view)
+        await interaction.response.send_message(view.content, view=view, ephemeral=True)
         message = await interaction.original_response()
         view.set_message(message)
         await view.wait()
@@ -1100,7 +1101,7 @@ class MessageMaker(commands.Cog):
     # --------EmbedBuilder Command Exceptions--------
     @messagemaker.error
     async def messagemaker_error(self, interaction: discord.Interaction, error):
-        if isinstance(error, app_commands.errors.MissingRole):
+        if isinstance(error, app_commands.errors.MissingPermissions):
             await interaction.response.send_message(embed=discord.Embed(description=f"❌ You aren't authorized to do that!", color=discord.Color.red()), ephemeral=True)
         else:
             raise Exception

@@ -1,3 +1,4 @@
+import re
 import config
 import discord
 import datetime
@@ -55,8 +56,10 @@ class ApplicationModal(Modal, title="Task Force Application Form"):
         self.add_item(self.question_five)
 
     async def on_submit(self, interaction: discord.Interaction):
-        if ' ' in self.question_three.value:
-            await interaction.response.send_message(embed=discord.Embed(description="{} Unable to process application!\n\n**Reason:** Invalid callsign format.".format(config.ERROR_EMOJI), color=discord.Color.red()).set_footer(text="Callsign must be only one word with no spaces"), ephemeral=True)
+        callsign_pattern = r'^[a-zA-Z]+$'
+        match = re.match(callsign_pattern, self.question_three.value)
+        if not match:
+            await interaction.response.send_message(embed=discord.Embed(description="{} Unable to process application!\n\n**Reason:** Invalid callsign format.".format(config.ERROR_EMOJI), color=discord.Color.red()).set_footer(text="Callsign must contains alphabets only! Spaces, numbers and symbols aren't allowed."), ephemeral=True)
             return
         
         if self.question_five.value.lower() != 'y' and self.question_five.value.lower() != 'n':
