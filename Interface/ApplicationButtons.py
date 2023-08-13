@@ -1,5 +1,6 @@
 import config
 import discord
+import asyncio
 import datetime
 
 from discord import ButtonStyle
@@ -34,12 +35,18 @@ class ApplicationButtons(View):
             recruitment_element_orion_role = interaction.guild.get_role(config.RECRUITMENT_ELEMENT_ORION_ROLE_ID)
 
             await user.remove_roles(verified_role)
+            await asyncio.sleep(1)
             await user.remove_roles(civilian_role)
+            await asyncio.sleep(1)
             await user.add_roles(enlisted_role)
+            await asyncio.sleep(1)
             await user.add_roles(recruit_role)
+            await asyncio.sleep(1)
             await user.add_roles(recruitment_element_orion_role)
+            await asyncio.sleep(1)
             await user.add_roles(clearance_level_0_role)
-            await user.edit(nick="[E-0] REC. \"{}\"".format(callsign))
+            await asyncio.sleep(1)
+            await user.edit(nick="E0 | Rec. {}".format(callsign))
 
             self.accept_button.disabled = True
             self.reject_button.disabled = True
@@ -54,7 +61,7 @@ class ApplicationButtons(View):
                 description="Welcome to Task Force Conquerors! Your equipment and gear will be down below in the recruitment category in {}. If you have any questions, please put it in the Help desk. Thank you for joining!".format(armory_channel.mention),
                 color=config.TFC_GOLD
             )
-            welcome_embed.set_image(url="https://i.imgur.com/XaUgVC6.png")
+            welcome_embed.set_image(url=config.TFC_BANNER)
             await on_topic_channel.send(content=user.mention, embed=welcome_embed)
             await logs_channel.send(embed=discord.Embed(description="{} has accepted {}'s application.".format(interaction.user.mention, interaction.message.mentions[0].mention), color=config.TFC_GOLD, timestamp=datetime.datetime.now()))
         else:

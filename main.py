@@ -1,9 +1,12 @@
 import os
 import config
 import discord
+import sqlite3
 
 from discord.ext import commands
 from Interface.ApplicationButtons import ApplicationButtons
+from Interface.InformationButtons import InformationView
+from Interface.LOARequestView import LOARequestView
 
 intents = discord.Intents.all()
 
@@ -18,6 +21,21 @@ class Bot(commands.Bot):
     async def setup_hook(self):
 
         self.add_view(ApplicationButtons())
+        self.add_view(InformationView())
+        self.add_view(LOARequestView())
+
+        sqlite3.connect("./Databases/data.sqlite").execute(
+            '''
+                CREATE TABLE IF NOT EXISTS UserLOAs (
+                    user_id INTEGER,
+                    reason TEXT,
+                    starting_time INTEGER,
+                    ending_time INTEGER,
+                    accepted_by INTEGER,
+                    PRIMARY KEY (user_id)
+                )
+            '''
+        )
 
         for filename in os.listdir("./Commands"):
             if filename.endswith('.py'):
@@ -30,6 +48,14 @@ class Bot(commands.Bot):
         for filename in os.listdir("./Events"):
             if filename.endswith('.py'):
                 await self.load_extension('Events.{}'.format(filename[:-3]))
+                print("Loaded {}".format(filename))
+
+            if filename.startswith('__'):
+                pass
+        
+        for filename in os.listdir("./Tasks"):
+            if filename.endswith('.py'):
+                await self.load_extension('Tasks.{}'.format(filename[:-3]))
                 print("Loaded {}".format(filename))
 
             if filename.startswith('__'):
