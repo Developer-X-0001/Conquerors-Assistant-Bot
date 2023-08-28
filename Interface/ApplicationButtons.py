@@ -52,6 +52,7 @@ class ApplicationButtons(View):
             self.reject_button.disabled = True
 
             self.accept_button.label = "Accepted"
+            self.accept_button.style = ButtonStyle.green
             self.accept_button.emoji = config.DONE_EMOJI
 
             application_embed.set_footer(text="Application accepted!")
@@ -78,6 +79,7 @@ class ApplicationButtons(View):
             self.reject_button.disabled = True
 
             self.reject_button.label = "Rejected"
+            self.reject_button.style = ButtonStyle.red
 
             application_embed.set_footer(text="Application rejected!")
             await interaction.response.edit_message(embed=application_embed, view=self)

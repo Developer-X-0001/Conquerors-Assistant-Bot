@@ -12,7 +12,7 @@ class InformationView(View):
     def __init__(self):
         super().__init__(timeout=None)
     
-    @button(label="If you are a visitor, please click on \"I'm a Visitor\" button. Otherwise \"Apply\"", disabled=True, custom_id='info_btn_disabled', row=0)
+    @button(label="If you are a visitor, click on \"I'm a Visitor\" button. Otherwise \"Apply\"", disabled=True, custom_id='info_btn_disabled', row=0)
     async def info_btn(self, interaction: discord.Interaction, button: Button):
         pass
 

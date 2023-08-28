@@ -105,13 +105,19 @@ class LOARequestView(View):
         self.database = sqlite3.connect("./Databases/data.sqlite")
         super().__init__(timeout=None)
     
-    @button(label="Accept", style=ButtonStyle.green, custom_id="loa_accept_button")
+    @button(label="Accept", emoji=config.DONE_EMOJI, style=ButtonStyle.gray, custom_id="loa_accept_button")
     async def loa_accept_btn(self, interaction: discord.Interaction, button: Button):
+        user = interaction.message.mentions[0]
         bot_operator_role = interaction.guild.get_role(config.BOT_OPERATOR_ROLE_ID)
         if bot_operator_role in interaction.user.roles:
+
+            if user == interaction.user:
+                await interaction.response.send_message(embed=discord.Embed(description="{} **You can't accept your own request!**".format(config.ERROR_EMOJI), color=config.TFC_GOLD), ephemeral=True)
+                return
+            
             loa_role = interaction.guild.get_role(config.LOA_ROLE_ID)
             logs_channel = interaction.guild.get_channel(config.LOA_LOGS_CHANNEL_ID)
-            user = interaction.message.mentions[0]
+            
             await user.add_roles(loa_role)
 
             loa_embed = interaction.message.embeds[0]
@@ -119,8 +125,9 @@ class LOARequestView(View):
 
             self.loa_accept_btn.disabled = True
             self.loa_accept_btn.label = "Accepted"
+            self.loa_accept_btn.style = ButtonStyle.green
+
             self.loa_reject_btn.disabled = True
-            self.loa_reject_btn.style = ButtonStyle.gray
 
             reason = interaction.message.embeds[0].fields[2].value
 
@@ -138,18 +145,25 @@ class LOARequestView(View):
             await interaction.response.send_message(embed=discord.Embed(description="{} **You aren't authorized to do that!**".format(config.ERROR_EMOJI), color=config.TFC_GOLD), ephemeral=True)
             return
         
-    @button(label="Reject", style=ButtonStyle.red, custom_id="loa_reject_button")
+    @button(label="Reject", emoji=config.ERROR_EMOJI, style=ButtonStyle.gray, custom_id="loa_reject_button")
     async def loa_reject_btn(self, interaction: discord.Interaction, button: Button):
+        user = interaction.message.mentions[0]
         bot_operator_role = interaction.guild.get_role(config.BOT_OPERATOR_ROLE_ID)
         if bot_operator_role in interaction.user.roles:
+
+            if user == interaction.user:
+                await interaction.response.send_message(embed=discord.Embed(description="{} **You can't accept your own request!**".format(config.ERROR_EMOJI), color=config.TFC_GOLD), ephemeral=True)
+                return
+            
             loa_embed = interaction.message.embeds[0]
             logs_channel = interaction.guild.get_channel(config.LOA_LOGS_CHANNEL_ID)
             loa_embed.set_footer(text="Request Rejected by {}".format(interaction.user.display_name))
 
             self.loa_accept_btn.disabled = True
-            self.loa_accept_btn.style = ButtonStyle.gray
+            
             self.loa_reject_btn.disabled = True
             self.loa_reject_btn.label = "Rejected"
+            self.loa_reject_btn.style = ButtonStyle.red
 
             await logs_channel.send(embed=discord.Embed(description="{} has rejected {}'s LOA request.".format(interaction.user.mention, interaction.message.mentions[0].mention), color=config.TFC_GOLD, timestamp=datetime.datetime.now()))
             await interaction.response.edit_message(embed=loa_embed, view=self)
