@@ -1,4 +1,5 @@
 import config
+import sqlite3
 import discord
 import asyncio
 import datetime
@@ -8,6 +9,7 @@ from discord.ui import Button, View, button
 
 class ApplicationButtons(View):
     def __init__(self):
+        self.database = sqlite3.connect("./Databases/data.sqlite")
         super().__init__(timeout=None)
     
     @button(label="Accept", emoji=config.DONE_EMOJI, style=ButtonStyle.gray, custom_id="accept_button")
@@ -25,7 +27,10 @@ class ApplicationButtons(View):
 
             application_embed = interaction.message.embeds[0]
             callsign = application_embed.fields[3].value[2:]
-            user = interaction.message.mentions[0]
+            user = interaction.guild.get_member(interaction.message.mentions[0].id)
+            if user is None:
+                await interaction.message.edit(view=UserNotAvailableView())
+                return
 
             verified_role = interaction.guild.get_role(config.VERIFIED_ROLE_ID)
             enlisted_role = interaction.guild.get_role(config.ENLISTED_ROLE_ID)
@@ -55,6 +60,7 @@ class ApplicationButtons(View):
             self.accept_button.style = ButtonStyle.green
             self.accept_button.emoji = config.DONE_EMOJI
 
+            self.database.execute("INSERT INTO UserData (user_id, callsign, rank) VALUES (?, ?, ?)", (user.id, callsign, 'E0')).connection.commit()
             application_embed.set_footer(text="Application accepted!")
             await interaction.message.edit(embed=application_embed, view=self)
             welcome_embed = discord.Embed(
@@ -62,7 +68,7 @@ class ApplicationButtons(View):
                 description="Welcome to Task Force Conquerors! Your equipment and gear will be down below in the recruitment category in {}. If you have any questions, please put it in the Help desk. Thank you for joining!".format(armory_channel.mention),
                 color=config.TFC_GOLD
             )
-            welcome_embed.set_image(url=config.TFC_BANNER)
+            welcome_embed.set_image(url=config.WELCOME_BANNER)
             await on_topic_channel.send(content=user.mention, embed=welcome_embed)
             await logs_channel.send(embed=discord.Embed(description="{} has accepted {}'s application.".format(interaction.user.mention, interaction.message.mentions[0].mention), color=config.TFC_GOLD, timestamp=datetime.datetime.now()))
         else:
@@ -87,3 +93,11 @@ class ApplicationButtons(View):
         else:
             await interaction.response.send_message(embed=discord.Embed(description="{} **You aren't authorized to do that!**".format(config.ERROR_EMOJI), color=config.TFC_GOLD), ephemeral=True)
             return
+    
+class UserNotAvailableView(View):
+    def __init__(self):
+        super().__init__(timeout=None)
+    
+    @button(label="User isn't present in the server anymore!", emoji=config.ERROR_EMOJI, disabled=True)
+    async def user_not_Avail(self, interaction: discord.Interaction, button: Button):
+        return

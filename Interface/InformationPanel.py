@@ -2,22 +2,52 @@ import config
 import discord
 
 from discord import ButtonStyle
+from config import RANKS, RANK_LIST
 from discord.ui import View, Button, button
 
 class InformationPanelView(View):
     def __init__(self):
         super().__init__(timeout=None)
     
-    # @button(label="Ranking Up", emoji=config.PROMOTION_EMOJI, style=ButtonStyle.gray, custom_id="ranking_up_btn")
-    # async def ranking_up_btn(self, interaction: discord.Interaction, button: Button):
-    #     embed = discord.Embed(
-    #         title="Task Force \"Conquerors\" Rank-Up Conditions",
-    #         description="## Points System\n\n**__Deployments:__**\n2 points = 1 hour\n3 points = 2 hours\n4 points = 3 hours\n\n**__Planned/Joint Operations:__**\n4 points = 1 hour\n6 points = 2 hours\n8 points = 3 hours\n\n### __Enlisted__\n- **E1** Private = Pass BCT\n- **E2** Private First Class = 10 Points\n- **E3** Lance Corporal = 20 Points\n### __NCOs__\n- **N0** NCO Cadet = Pass NCOA\n- **N1** Corporal = 30 Points\n- **N2** Master Corporal = 50 Points\n- **N3** Sergeant = 70 Points\n- **N4** Staff Sergeant = 90 Points\n### __SNCOs__\n- **M0** SNCO Cadet = Pass SNCOA\n- **M1** Master Sergeant = 120 Points\n- **M2** First Sergeant = 150 Points\n- **M3** Sergeant Major = 180 Points\n### __Warrant Officers__\n- **W1** Warrant Officer 1\n- **W2** Warrant Officer 2\n- **W3** Warrant Officer 3\n- **W4** Warrant Officer 4\n- **W5** Warrant Officer 5\n### __Officers__\n- **O-1** Overseer\n- **O-2** 2nd Lieutenant\n- **O-3** 1st Lieutenant\n- **O-4** Captain\n- **O-5** Major\n- **O-6** Lieutenant Colonel\n- **O-7** Colonel\n\n**Note:** Promotions after **M3 Sergeant Major** will be hand-picked.",
-    #         color=config.TFC_GOLD
-    #     )
-    #     embed.set_image(url=config.RANKING_UP_BANNER)
+    @button(label="Ranking Up", emoji=config.PROMOTION_EMOJI, style=ButtonStyle.gray, custom_id="ranking_up_btn")
+    async def ranking_up_btn(self, interaction: discord.Interaction, button: Button):
+        enlisted_ranks = "### __Enlisted__\n"
+        senior_enlisted_ranks = "### __Senior Enlisted__\n"
+        wo_ranks = "### __Warrant Officers__\n"
+        officer_ranks = "### __Commissioned Officers__\n"
 
-    #     await interaction.response.send_message(embed=embed, ephemeral=True)
+        for rank in RANK_LIST:
+            if rank.startswith('E'):
+                rank_name = RANKS[rank]['name']
+                requirement = RANKS[rank]['requirement']
+                enlisted_ranks += f"- **{rank}** | {rank_name} = {requirement}\n"
+                
+                
+            if rank.startswith('SE'):
+                rank_name = RANKS[rank]['name']
+                requirement = RANKS[rank]['requirement']
+                senior_enlisted_ranks += f"- **{rank}** | {rank_name} = {requirement}\n"
+                
+            if rank.startswith('W') or rank.startswith('CW'):
+                rank_name = RANKS[rank]['name']
+                requirement = RANKS[rank]['requirement']
+
+                wo_ranks += f"- **{rank}** | {rank_name} = {requirement}\n"
+            
+            if rank.startswith('O'):
+                rank_name = RANKS[rank]['name']
+                requirement = RANKS[rank]['requirement']
+
+                officer_ranks += f"- **{rank}** | {rank_name} = {requirement}\n"
+
+        embed = discord.Embed(
+            title="Task Force \"Conquerors\" Rank-Up Conditions",
+            description=f"## Points System\n\n**__Operations:__**\n2 points = 1 hour\n3 points = 2 hours\n4 points = 3 hours\n\n**__Planned/Joint Operations:__**\n4 points = 1 hour\n6 points = 2 hours\n8 points = 3 hours\n\n**__Board Process (Steps):__**\n1. Receive Recommendations from NCO's (ranks SE5 - SE7).\n2. An SE8 will determine Yes or No.\n3. A board of SE8's and SE9's will interview you and vote. 2/3 majority 'yes' means you get to proceed.\n4. Evaluation and or Enrollment into NCOA.\n\n__**Centralized Board Process (Steps):**__\n1. Receive Recommendations from NCO's (ranks SE5 - SE7).\n2. An SE8 will determine Yes or No.\n3. A board of SE8's and SE9's will interview you and vote. 2/3 majority 'yes' means you get to proceed.\n\n{enlisted_ranks}{senior_enlisted_ranks}{wo_ranks}{officer_ranks}",
+            color=config.TFC_GOLD
+        )
+        embed.set_image(url=config.RANKING_UP_BANNER)
+
+        await interaction.response.send_message(embed=embed, ephemeral=True)
 
     @button(label="Awards", emoji=config.POINTS_EMOJI, style=ButtonStyle.gray, custom_id="awards_btn")
     async def awards_btn(self, interaction: discord.Interaction, button: Button):
@@ -34,7 +64,11 @@ class InformationPanelView(View):
     async def advert_btn(self, interaction: discord.Interaction, button: Button):
         embed = discord.Embed(
             title="Task Force \"Conquerors\" Advertisement",
-            description="**[Nitro Subscribers Only]** By posting our ad in <#594055313024483329> , you'll be helping us become a more bigger faction.\n\n**Google Document:**\n[Nitro Subscribers Advertisement Text](https://docs.google.com/document/d/1dqptb5bbupCxUAoy2uGuePSIkPm07yHiIYzkQCmHyPw/edit)\n\n**Copyable Message:**\n```\n|\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac[:TFC_Logo:]\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac|\n\n{:TFC_Logo:} **Task Force \"Conquerors\"**\n*\"To allies we bring hope, To enemies we bring judgement.\"*\n\n|\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac{:TFC_Logo: | **About Us**}\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac|\n\n\n> *Task Force \"Conquerors\" is a Task Force composed of NATO Elements. Our priority is to provide and teach new people to the best of our abilities, while also learning from others to make sure your experience with us is fun and unforgettable. We are a faction that is built to fit both casual players and serious players in different timezones. *\n\n|\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac{:TFC_Logo: | **What We Can Offer**}\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac|\n\n**__Great Deployments__**\n\n> *Deployments are hosted frequently, and we intend to make our Operations and Deployments as realistic as can be, while achieving a fun and enjoyable time during the Deployments. We make sure to keep our deployments fresh with builds, so that you wouldn\u2019t need to repeat the same thing over and over again.*\n\n**__Trainings__**\n\n> *With our Trainings, we will teach you the basics and then the more enhanced parts so that you can become an effective and efficient Operator. We will make sure to help you and teach you to be better.*\n\n**__Fun and Relaxed Community__**\n\n> *Our community will ensure that you have a great time, both activity and gameplay wise and will help you in any way we can! Our staff team will also be making sure you have a good time, and will always be on the lookout for feedback. We hope to make your experience enjoyable and unforgettable.*\n\n**__Storylines and Lore__**\n\n> *Story Campaigns and Lore is our first Priority when it comes to fun and the true experience for both Casual and Serious Players alike! This faction follows our own Storyline and takes on our perspective and twists on the Ronograd Island Occupation.*\n\n|\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac{:TFC_Logo: | **Companies**}\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac|\n\n**__1st Company \"Sentinel\"__**\n*\u201dShow us the Fortress, We\u2019ll show you the Ruins.\u201d*\n\n> :arrow: *1st Company \"Sentinels\", the standard and main fighting force that is compelled by their spirit and competitiveness.*\n\n**__2nd Company \"Hailstorm\"__**\n*\u201dWe bring hell down from On High.\u201d*\n\n> :arrow: *2nd Company \"Hailstorm'', the aviation company that spits lead at anything that gets in their way, they are there to save you when needed.*\n\n|\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac{:TFC_Logo: | **Why You Should Join**}\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac|\n\n> *We're a new optimistic and upcoming faction that focuses on the quality of Operations and Deployments to ensure your interests and expectations are met. We have a wide variety of Deployments and Experimental Deployments. We have a small moderator team, but are learning while at the same time being flexible and making sure that all timezones will have fun.*\n\n*__We Hope to see you Operators on the field.__*\nhttps://discord.gg/taskforceconquerors\nhttps://cdn.discordapp.com/attachments/1116280963807318066/1120605311598854204/2023-06-14_4.png\nhttps://cdn.discordapp.com/attachments/1109780251258671184/1120642019790966845/2023-06-14.png\nhttps://cdn.discordapp.com/attachments/1109116460887978004/1120340058554241206/body_cam.png\n\n|\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac[:TFC_Logo:]\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac\u25ac|\n```",
+            description=f"**[Nitro Subscribers Only]** By posting our ad in <#594055313024483329> , you'll be helping us become a more bigger faction.\n\n\
+                        **Google Document:**\n\
+                        [Nitro Subscribers Advertisement Text](https://docs.google.com/document/d/1iHZfRJfsjofVvA9NvVAptJepzUVoJk51MHA4RzLLL2g/edit?usp=sharing)\n\n\
+                        **Copyable Message:**\n\
+                        ```\n{config.TFC_ADVERT}\n```",
             color=config.TFC_GOLD
         )
         embed.set_image(url=config.ADVERTISEMENT_BANNER)

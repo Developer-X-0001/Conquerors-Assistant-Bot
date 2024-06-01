@@ -19,23 +19,28 @@ class PromotionSelectMenu(Select):
     def __init__(self, user: discord.Member):
         options = []
 
-        current_paygrade = user.nick[:2]
-        available_ranks = RANK_LIST[RANK_LIST.index(current_paygrade)+1:]
+        current_rank = user.nick[:2]
+        available_ranks = []
+        if current_rank.startswith('E'):
+            available_ranks = RANK_LIST[RANK_LIST.index(current_rank)+1:5]
+
+        if current_rank.startswith('N'):
+            available_ranks = RANK_LIST[RANK_LIST.index(current_rank)+1:10]
+
+        if current_rank.startswith('M'):
+            available_ranks = RANK_LIST[RANK_LIST.index(current_rank)+1:14]
+
+        if current_rank.startswith('W'):
+            available_ranks = RANK_LIST[RANK_LIST.index(current_rank)+1:19]
+        
+        if current_rank.startswith('O'):
+            available_ranks = RANK_LIST[RANK_LIST.index(current_rank)+1:26]
 
         for rank in available_ranks:
-            rank_index = RANK_LIST.index(rank)
-
-            if rank_index < 11:
-                requirement = f"{RANKS[rank]['points']} Points"
+            requirement = f"{RANKS[rank]['points']} Points"
             
-            if 22 >= rank_index >= 11:
-                requirement = "Merit Required"
-            
-            if rank_index >= 23:
-                requirement = "Not Available"
-
             options.append(
-                discord.SelectOption(label=RANKS[rank]['name'], emoji=RANKS[rank]['emoji'], description=requirement, value=rank)
+                discord.SelectOption(label=RANKS[rank]['name'], emoji=None if not RANKS[rank]['emoji'] else RANKS[rank]['emoji'], description=requirement, value=rank)
             )
 
         super().__init__(
@@ -49,7 +54,7 @@ class PromotionSelectMenu(Select):
         request_data = database.execute("SELECT user_id FROM PromotionRequests WHERE user_id = ?", (interaction.user.id,)).fetchone()
         if request_data != None:
             promotion_requests_channel = interaction.guild.get_channel(config.PROMOTION_REQUESTS_CHANNEL_ID)
-            await interaction.response.edit_message(embed=discord.Embed(description="{} **You already have an open request in {}**".format(config.WARN_EMOJI, promotion_requests_channel.mention), color=config.TFC_GOLD), view=None)
+            await interaction.response.edit_message(embed=discord.Embed(description="{} **You already have an open request in {}**".format(config.WARN_EMOJI, promotion_requests_channel.mention), color=config.TFC_GOLD), view=PromotionReturnView())
             return
 
         headers = {
@@ -104,6 +109,15 @@ class PromotionSelectMenu(Select):
 
             await interaction.response.edit_message(embed=embed, view=PromotionRequestConfirmView())
 
+class PromotionReturnView(View):
+    def __init__(self):
+        super().__init__(timeout=None)
+    
+    @button(label="Return Request", style=ButtonStyle.red)
+    async def return_req_btn(self, interaction: discord.Interaction, button: Button):
+        database.execute("DELETE FROM PromotionRequests WHERE user_id = ?", (interaction.user.id,)).connection.commit()
+        await interaction.response.edit_message(embed=discord.Embed(description=f"{config.DONE_EMOJI} Your promotion request has been removed.", color=config.TFC_GOLD))
+        return
 
 class PromotionRequestConfirmView(View):
     def __init__(self):
@@ -143,6 +157,11 @@ class PromotionRequestManage(View):
             RANKS = config.RANKS
             RANK_LIST = config.RANK_LIST
 
+            data = database.execute("SELECT callsign, name, rank FROM UserData WHERE user_id = ?", (user.id,)).fetchone()
+            callsign = data[0]
+            name = data[1] if data[1] else None
+            rank = data[2]
+
             if user.nick:
                 embed = interaction.message.embeds[0]
                 current_paygrade = embed.fields[2].value[:2]
@@ -150,7 +169,7 @@ class PromotionRequestManage(View):
 
                 next_rank_position = RANK_LIST.index(requesting_paygrade)
 
-                if next_rank_position > 26:
+                if next_rank_position > 14:
                     await interaction.response.send_message(embed=discord.Embed(description="{} User is at the highest rank!".format(config.ERROR_EMOJI), color=config.TFC_GOLD), ephemeral=True)
                     return
                 
@@ -172,8 +191,6 @@ class PromotionRequestManage(View):
                     next_rank_emoji = RANKS[RANK_LIST[next_rank_position]]['emoji']
                     next_rank_name = RANKS[RANK_LIST[next_rank_position]]['name']
 
-                    callsign = user.nick.split(' | ')[1].split('. ')[1]
-
                     if current_rank_role in user.roles:
                         await user.remove_roles(current_rank_role)
                         await asyncio.sleep(1)
@@ -184,7 +201,12 @@ class PromotionRequestManage(View):
                         await asyncio.sleep(1)
                         await user.add_roles(next_clearance_role)
                     
-                    await user.edit(nick=f"{next_paygrade} | {next_nick}. {callsign}")
+                    if name is None:
+                        await user.edit(nick=f"{next_paygrade} | {next_nick}. {callsign}")
+                    else:
+                        await user.edit(nick=f"{next_paygrade} | {next_nick}. \"{callsign}\" {name}")
+
+                    database.execute("UPDATE UserData SET rank = ? WHERE user_id = ?", (next_paygrade, user.id,)).connection.commit()
 
                     self.promotion_accept_btn.disabled = True
                     self.promotion_accept_btn.label = "Accepted"
@@ -210,9 +232,9 @@ class PromotionRequestManage(View):
                         pass
 
 
-            else:
-                await interaction.response.send_message(embed=discord.Embed(description="{} **You aren't authorized to do that!**".format(config.ERROR_EMOJI), color=config.TFC_GOLD), ephemeral=True)
-                return
+        else:
+            await interaction.response.send_message(embed=discord.Embed(description="{} **You aren't authorized to do that!**".format(config.ERROR_EMOJI), color=config.TFC_GOLD), ephemeral=True)
+            return
 
     @button(label="Reject", emoji=config.ERROR_EMOJI, style=ButtonStyle.gray, custom_id="promotion_reject_button")
     async def promotion_reject_btn(self, interaction: discord.Interaction, button: Button):

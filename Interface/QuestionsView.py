@@ -44,8 +44,8 @@ class QuestionManageView(View):
     
     @button(label="Reply", emoji=config.REPLY_EMOJI, style=ButtonStyle.gray, custom_id="question_reply_button")
     async def question_reply_btn(self, interaction: discord.Interaction, button: Button):
-        community_management_role = interaction.guild.get_role(config.COMMUNITY_MANAGEMENT_ROLE_ID)
-        if community_management_role in interaction.user.roles:
+        questions_responder_role = interaction.guild.get_role(config.QUESTIONS_RESPONDER_ROLE_ID)
+        if questions_responder_role in interaction.user.roles:
             current_reply = interaction.message.embeds[0].fields[0].value
             await interaction.response.send_modal(ReplyModal(original_view=self, old_reply=current_reply))
 
@@ -55,10 +55,8 @@ class QuestionManageView(View):
 
     @button(label="Delete", emoji=config.DELETE_EMOJI, style=ButtonStyle.gray, custom_id="question_delete_button")
     async def question_delete_btn(self, interaction: discord.Interaction, button: Button):
-        community_management_role = interaction.guild.get_role(config.COMMUNITY_MANAGEMENT_ROLE_ID)
-        if community_management_role in interaction.user.roles:
-            user = interaction.message.mentions[0]
-            embed = interaction.message.embeds[0]
+        questions_responder_role = interaction.guild.get_role(config.QUESTIONS_RESPONDER_ROLE_ID)
+        if questions_responder_role in interaction.user.roles:
             await interaction.response.defer()
             await interaction.message.delete()
 

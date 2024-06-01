@@ -35,32 +35,32 @@ class ArmorySelectMenu(Select):
     
         if value == 0:
             embed = discord.Embed(
-                title="1COY \"Sentinels\" Armory",
+                description="# 1COY \"Sentinels\" Armory",
                 color=config.SENTINELS_RED
             )
             embed.add_field(
-                name="Operator Kit:",
-                value="AC Combat (OCP / Varicam)\nVaricam Camo Equipment",
+                name="__Standard Uniform:__",
+                value="1. Marine Raider Regiment (M81 WOODLAND) *$600*\n2. Flannel *Event Achieved*",
                 inline=False
             )
             embed.add_field(
-                name="Helmets:",
-                value="Maritime Ballistic\nIntel Ballistic\nMICH 2000\nSentinel Helmet",
+                name="__Standard Helmets:__",
+                value="1. MICH 2000 *$0*\n2. INTEL BALLISTIC 3.0 *$1400*\n3. MARITIME BALLISTIC *$1400*\n4. BOONIE *$20-30*\n\n- *Helmet must be tan or varicam.*\n- *You may customize your helmet to any realistic degree.*",
                 inline=False
             )
             embed.add_field(
-                name="Vests:",
-                value="MPC Vest\nCVS Vest\nOBAS-QR\nNATO Country Flags (Asian Flags are an exception)",
+                name="__Standard Vests:__",
+                value="1. MPC *$1388*\n2. OBAS-QR *$1440*\n3. CVS Vest *$3103*\n\n- *Vest and accessories must be varivam or tan.*\n- *You may customize your vest to any realistic degree.*\n- *You may use the flag of your nationality.*",
                 inline=False
             )
             embed.add_field(
-                name="Belts:",
-                value="Customisation Is Infinite",
+                name="__Standard Belts:__",
+                value="1. RIGGER'S BELT *$0*\n2. OPERATOR GUN BELT *$810*\n\n- *Belt and accessories must be varicam or tan.*\n- *You may customize your belt to any realistic degree.*",
                 inline=False
             )
             embed.add_field(
-                name="Gun Restrictions:",
-                value="M4A1\nAUG A3 / AUG A1\nC7A2\nMK18\nHK416A5\nMK 16 / 17 SCAR\nMP5 / MP7\n(Any Gun NATO Compliant)",
+                name="__Weapon Restrictions:__",
+                value="- *Any NATO compliant weapon is permitted.*\n- *All secondary's are permitted except MAKAROV PM, Deagle and BE75 Auto.*\n- *Russian weapons or otherwise AK based weapons are prohibited.*\n- *You may customize your weapon to any realistic degree.*",
                 inline=False
             )
             embed.set_thumbnail(url=config.SENTINELS_ICON)
@@ -72,32 +72,32 @@ class ArmorySelectMenu(Select):
 
         if value == 1:
             embed = discord.Embed(
-                title="2COY \"Hailstorm\" Armory",
+                description="# 2COY \"Hailstorm\" Armory",
                 color=config.HAILSTORM_BLUE
             )
             embed.add_field(
-                name="Operator Kit:",
-                value="US PCU BLOCK I L5\nBlack Camo Equipment",
+                name="__Standard Uniform:__",
+                value="1. US PCU Block I L5 *$300*\n2. AC Combat (VariCam) *$300*",
                 inline=False
             )
             embed.add_field(
-                name="Helmets:",
-                value="HGU-56P",
+                name="__Standard Helmets:__",
+                value="1. HGU-56/P *$3000*\n\n- *Helmet and accessory colors must be vericam.*\n- *You may customize your helmet to any realistic degree.*",
                 inline=False
             )
             embed.add_field(
-                name="Vests:",
-                value="OBAS-QR\nCVS Vest\nNATO Country Flags (Asian Flags are an exception)",
+                name="__Standard Vests:__",
+                value="1. MPC *$1388*\n2. OBAS-QR *$1440*\n3. CVS Vest *$3103*\n\n- *Vest and accessories must be vericam.*\n- *You may customize your vest to any realistic degree.*\n- *You may use the flag of your nationality.*",
                 inline=False
             )
             embed.add_field(
-                name="Belts:",
-                value="Customisation Is Infinite",
+                name="__Standard Belts:__",
+                value="1. RIGGER'S BELT *$0*\n2. OPERATOR GUN BELT *$810*\n\n- *Belt and accessories must be vericam.*\n- *You may customize your belt to any realistic degree.*",
                 inline=False
             )
             embed.add_field(
-                name="Gun Restrictions:",
-                value="MP5\nMP7\nUMP45",
+                name="__Weapon Restrictions:__",
+                value="1. UMP45 *$1700*\n2. MP5 *$2100*\n3. MP7 *$2400*\n\n- *All secondary's are permitted except MAKAROV PM, Deagle and BE75 Auto.*\n- *You may customize your weapon to any realistic degree.*",
                 inline=False
             )
             embed.set_thumbnail(url=config.HAILSTORM_ICON)
@@ -109,32 +109,32 @@ class ArmorySelectMenu(Select):
 
         if value == 2:
             embed = discord.Embed(
-                title="Recruits \"Orion\" Armory",
+                description="# Recruits \"Orion\" Armory",
                 color=config.RECRUIT_PURPLE
             )
             embed.add_field(
-                name="Operator Kit:",
-                value="AC Combat (Tan 499)\nTan Camo Equipment",
+                name="__Standard Uniform:__",
+                value="1. SPECIAL PROJECTS GROUP *$600*",
                 inline=False
             )
             embed.add_field(
-                name="Helmets:",
-                value="Cap",
+                name="__Standard Helmets:__",
+                value="1. MICH 2000 *$0*\n2. CAP *$20*\n\n- *Helmet must be black.*",
                 inline=False
             )
             embed.add_field(
-                name="Vests:",
-                value="Shirt\nRucksack",
+                name="__Standard Vests:__",
+                value="- *Prohibited.*\n- RUCKSACK *$660*\n- *Rucksack must be black.*",
                 inline=False
             )
             embed.add_field(
-                name="Belts:",
-                value="Customisation Is Infinite",
+                name="__Standard Belts:__",
+                value="1. RIGGER'S BELT *$0*\n2. OPERATOR GUN BELT *$810*\n\n- *Belt and accessories must be black.*\n- *You may customize your belt to any realistic degree.*",
                 inline=False
             )
             embed.add_field(
-                name="Gun Restrictions:",
-                value="M4A1\nAUG A3 / AUG A1\nC7A2\nMK18\nHK416A5\nMK 16 / 17 SCAR\nMP5 / MP7\n(Any Gun NATO Compliant)",
+                name="__Weapon Restrictions:__",
+                value="- *Any NATO compliant weapon is permitted.*\n- *All secondary's are permitted except MAKAROV PM, Deagle and BE75 Auto.*\n- *Russian weapons or otherwise AK based weapons are prohibited.*\n- *You may customize your weapon to any realistic degree.*\n- *Any magazine capacity higher than 30 rounds is prohibited.*",
                 inline=False
             )
             embed.set_thumbnail(url=config.ORION_ICON)
@@ -150,18 +150,18 @@ class LoadoutImageView(View):
 
     @button(label="View In-Game Image", emoji="📸", style=ButtonStyle.gray)
     async def view_ingame_image_btn(self, interaction: discord.Interaction, button: Button):
-        title = interaction.message.embeds[0].title
+        description = interaction.message.embeds[0].description
 
-        if title == "1COY \"Sentinels\" Armory":
-            await interaction.response.send_message(embed=discord.Embed(title=title, color=config.SENTINELS_RED).set_image(url=config.SENTINELS_INGAME_IMAGE), ephemeral=True)
+        if description == "# 1COY \"Sentinels\" Armory":
+            await interaction.response.send_message(embed=discord.Embed(description="#"+description, color=config.SENTINELS_RED).set_image(url=config.SENTINELS_INGAME_IMAGE), ephemeral=True)
             return
 
-        if title == "2COY \"Hailstorm\" Armory":
-            await interaction.response.send_message(embed=discord.Embed(title=title, color=config.HAILSTORM_BLUE).set_image(url=config.HAILSTORM_INGAME_IMAGE), ephemeral=True)
+        if description == "# 2COY \"Hailstorm\" Armory":
+            await interaction.response.send_message(embed=discord.Embed(description="#"+description, color=config.HAILSTORM_BLUE).set_image(url=config.HAILSTORM_INGAME_IMAGE), ephemeral=True)
             return
 
-        if title == "Recruits \"Orion\" Armory":
-            await interaction.response.send_message(embed=discord.Embed(title=title, color=config.RECRUIT_PURPLE).set_image(url=config.ORION_INGAME_IMAGE), ephemeral=True)
+        if description == "# Recruits \"Orion\" Armory":
+            await interaction.response.send_message(embed=discord.Embed(description="#"+description, color=config.RECRUIT_PURPLE).set_image(url=config.ORION_INGAME_IMAGE), ephemeral=True)
             return
         
         else:
@@ -170,18 +170,18 @@ class LoadoutImageView(View):
     
     @button(label="View Menu Image", emoji="📷", style=ButtonStyle.gray)
     async def vieW_menu_image_btn(self, interaction: discord.Interaction, button: Button):
-        title = interaction.message.embeds[0].title
+        description = interaction.message.embeds[0].description
 
-        if title == "1COY \"Sentinels\" Armory":
-            await interaction.response.send_message(embed=discord.Embed(title=title, color=config.SENTINELS_RED).set_image(url=config.SENTINELS_MENU_IMAGE), ephemeral=True)
+        if description == "# 1COY \"Sentinels\" Armory":
+            await interaction.response.send_message(embed=discord.Embed(description="#"+description, color=config.SENTINELS_RED).set_image(url=config.SENTINELS_MENU_IMAGE), ephemeral=True)
             return
 
-        if title == "2COY \"Hailstorm\" Armory":
-            await interaction.response.send_message(embed=discord.Embed(title=title, color=config.HAILSTORM_BLUE).set_image(url=config.HAILSTORM_MENU_IMAGE), ephemeral=True)
+        if description == "# 2COY \"Hailstorm\" Armory":
+            await interaction.response.send_message(embed=discord.Embed(description="#"+description, color=config.HAILSTORM_BLUE).set_image(url=config.HAILSTORM_MENU_IMAGE), ephemeral=True)
             return
 
-        if title == "Recruits \"Orion\" Armory":
-            await interaction.response.send_message(embed=discord.Embed(title=title, color=config.RECRUIT_PURPLE).set_image(url=config.ORION_MENU_IMAGE), ephemeral=True)
+        if description == "# Recruits \"Orion\" Armory":
+            await interaction.response.send_message(embed=discord.Embed(description="#"+description, color=config.RECRUIT_PURPLE).set_image(url=config.ORION_MENU_IMAGE), ephemeral=True)
             return
         
         else:

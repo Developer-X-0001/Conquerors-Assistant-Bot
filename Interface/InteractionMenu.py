@@ -6,6 +6,7 @@ from discord.ui import Select, View
 from Interface.QuestionsView import QuestionModal
 from Interface.LOARequestView import LOARequestModal
 from Interface.PromotionRequest import PromotionRequestView
+from Interface.CallsignChangeView import CallsignChangeModal, CallsignReturnView
 
 database = sqlite3.connect("./Databases/data.sqlite")
 
@@ -20,7 +21,8 @@ class InteractionSelectMenu(Select):
             discord.SelectOption(label="Send LOA Request", emoji=config.LOA_EMOJI, value=0),
             discord.SelectOption(label="Request Promotion", emoji=config.PROMOTION_EMOJI, value=1),
             discord.SelectOption(label="Ask a Question", emoji=config.QUESTION_EMOJI, value=2),
-            discord.SelectOption(label="Check Points", emoji=config.POINTS_EMOJI, value=3)
+            discord.SelectOption(label="Check Points", emoji=config.POINTS_EMOJI, value=3),
+            discord.SelectOption(label="Request Callsign Change", emoji=config.CALLSIGN_EMOJI, value=4)
         ]
 
         super().__init__(
@@ -44,7 +46,13 @@ class InteractionSelectMenu(Select):
 
         if value == 1:
             await interaction.response.edit_message(view=InteractionMenuView())
-            await interaction.followup.send(embed=discord.Embed(description="{} **Please choose a rank that you want to request.** Also make sure your DMs are open, because the decision on your request will be sent to your DMs.".format(config.PROMOTION_EMOJI), color=config.TFC_GOLD), view=PromotionRequestView(interaction.user), ephemeral=True)
+
+            current_rank = interaction.user.nick[:2]
+            if current_rank == 'O4' or current_rank == 'O5':
+                await interaction.followup.send(embed=discord.Embed(description="{} **You're already at the highest or the 2nd highest rank!**".format(config.ERROR_EMOJI), color=config.TFC_GOLD), ephemeral=True)
+                return
+            
+            await interaction.followup.send(embed=discord.Embed(description="{} **Please choose a rank that you want to request.**\nAlso make sure your DMs are open, because the decision on your request will be sent to your DMs.".format(config.PROMOTION_EMOJI), color=config.TFC_GOLD), view=PromotionRequestView(interaction.user), ephemeral=True)
             return
         
         if value == 2:
@@ -53,6 +61,7 @@ class InteractionSelectMenu(Select):
             return
     
         if value == 3:
+            await interaction.response.edit_message(view=InteractionMenuView())
             data = database.execute("SELECT points FROM UserData WHERE user_id = ?", (interaction.user.id,)).fetchone()
             if data is None:
                 database.execute("INSERT INTO UserData VALUES (?, ?)", (interaction.user.id, 0,)).connection.commit()
@@ -60,5 +69,16 @@ class InteractionSelectMenu(Select):
             else:
                 points = int(data[0])
 
-            await interaction.response.edit_message(view=InteractionMenuView())
             await interaction.followup.send(embed=discord.Embed(description="You have {} {} points.".format(config.POINTS_EMOJI, points), color=config.TFC_GOLD), ephemeral=True)
+            
+        if value == 4:
+            data = database.execute("SELECT * FROM CallsignRequests WHERE user_id = ?", (interaction.user.id,)).fetchone()
+            if data is None:
+                await interaction.response.send_modal(CallsignChangeModal())
+                await interaction.edit_original_response(view=InteractionMenuView())
+                return
+            
+            else:
+                await interaction.response.send_message(embed=discord.Embed(description="{} **You already have an open callsign update request!**".format(config.ERROR_EMOJI), color=config.TFC_GOLD), view=CallsignReturnView(), ephemeral=True)
+                return
+        

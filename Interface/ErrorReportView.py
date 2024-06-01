@@ -30,6 +30,9 @@ class ReportModal(Modal, title="Error Report Modal"):
             required=False
         )
 
+        self.add_item(self.error_code)
+        self.add_item(self.error_details)
+
     async def on_submit(self, interaction: discord.Interaction):
         error_logs_channel = interaction.guild.get_channel(config.ERROR_LOGS_CHANNEL_ID)
         error_embed = discord.Embed(

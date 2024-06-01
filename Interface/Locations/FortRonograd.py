@@ -1,0 +1,8 @@
+import config
+import discord
+
+FortRonogradEmbed = discord.Embed(
+    title="Fort Ronograd",
+    description="Fort Ronograd, often simply referred to as the Fort, is a military base in the northwest. Fort Ronograd appears to be a former military base that was taken over by the PoD, seemingly serving as the hub of their operations. Inside the fort are various large stone structures that used to house SAM systems somewhat similar to S-125s (the same systems as the ones previously found in the Naval Base, the only difference being that the ones in Fort Ronograd were indestructible), an observatory and the main building in the northern portion of the fortress, and some helipads in the eastern wing. Contrary to popular belief, there are two entrances to Fort Ronograd; the first being the main gate and the second being a small hill just to the right of the main gate. The hill is just high enough for players to jump up and climb onto the fort's wall.\nFort Ronograd is a raid location controlled entirely by the PoD. Dozens of enemy soldiers spawn at the fort, most of which just stand in one spot and wait for incoming players. Enemies can be found guarding the entrance on the wall, standing behind concrete or sandbag barriers, patrolling the main road, or just standing in the open. Snipers can also be found sneakily observing the whole base from the two towers in the fort. Hostages are held inside the main command center.",
+    color=discord.Color.red()
+).set_image(url=config.FORT_RONOGRAD_MAP_IMAGE)

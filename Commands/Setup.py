@@ -1,33 +1,37 @@
 import re
-import discord
 import config
+import sqlite3
+import discord
+import asyncio
 
 from discord.ext import commands
-from Interface.InformationPanel import InformationPanelView
-from Interface.InteractionMenu import InteractionMenuView
-from Interface.InformationButtons import InformationView
-from Interface.HierarchyMenu import HierarchyMenuView
-from Interface.SelfrolesMenu import SelfrolesMenuView
+from config import RANKS, RANK_LIST
 from Interface.ArmoryMenu import ArmoryMenuView
+from Interface.SelfrolesMenu import SelfrolesMenuView
+from Interface.HierarchyMenu import HierarchyMenuView
+# from Interface.LocationsPanel import LocationsPanelView
+from Interface.InformationButtons import InformationView
+from Interface.InteractionMenu import InteractionMenuView
+from Interface.InformationPanel import InformationPanelView
 
 class test(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
+        self.database = sqlite3.connect("./Databases/data.sqlite")
 
-    @commands.command(name="get")
-    async def get(self, ctx: commands.Context):
-        counter = 1
-        async for message in ctx.channel.history(limit=None):
-            if message.mentions != []:
-                pattern = r'Entry: #\d{4}'
+    @commands.command(name="add")
+    @commands.is_owner()
+    async def _add(self, ctx: commands.Context, msg_id: int, role_id: int, emoji_id: int):
+        msg = await ctx.channel.fetch_message(msg_id)
+        role = ctx.guild.get_role(role_id)
+        for reaction in msg.reactions:
+            if reaction.emoji.id == emoji_id:
+                users = [user async for user in reaction.users()]
 
-                # Search for the pattern in the message content
-                match = re.search(pattern, message.content)
-
-                if match:
-                    extracted_part = match.group()
-                    print(counter, message.author.display_name, extracted_part)
-                    counter += 1
+                for user in users:
+                    await user.add_roles(role)
+        
+        await ctx.reply("Done")
     
     @commands.command(name="setup")
     @commands.is_owner()
@@ -63,8 +67,8 @@ class test(commands.Cog):
                 inline=False
             )
             embed.add_field(
-                name="{} Do you understand the rules that are inplace, and do you understand that breaking them will lead to punishments at the discretion of officers?".format(config.ARROW_EMOJI),
-                value="```\nSimply reply with Y or N, no need to put any random alphabets in there.\n```",
+                name="{} What are your expectations from us?".format(config.ARROW_EMOJI),
+                value="```\nWhat do you expect in our faction that you would like to see? Must be 2-3 sentences long.\n```",
                 inline=False
             )
             #embed.set_thumbnail(url=config.TFC_ICON)
@@ -83,7 +87,8 @@ class test(commands.Cog):
                             \n- Send LOA Request (Leave of Absence)\
                             \n- Request Promotion\
                             \n- Ask a Question\
-                            \n- Check Points
+                            \n- Check Points\
+                            \n- Request Callsign Update
                             """,
                 color=config.TFC_GOLD
             )
@@ -109,6 +114,7 @@ class test(commands.Cog):
 
             await ctx.message.delete()
             await ctx.send(embed=embed, view=ArmoryMenuView())
+            return
 
         if arg == 'selfroles':
             embed = discord.Embed(
@@ -132,6 +138,7 @@ class test(commands.Cog):
 
             await ctx.message.delete()
             await ctx.send(embed=embed, view=SelfrolesMenuView())
+            return
 
         if arg == 'information':
             embed = discord.Embed(
@@ -141,29 +148,137 @@ class test(commands.Cog):
             )
             embed.add_field(
                 name="Following options are available at the moment:",
-                value="- **Awards**\n - Information about honorary awards for our vigilant operators.\n- **Faction Advertisement:**\n - If you are a server booster at PL5, you can get information about TFC advertisement format.",
+                value="- **Ranking Up**\n - Information about how to rank up and what are the requirements for each rank.\n- **Awards**\n - Information about honorary awards for our vigilant operators.\n- **Faction Advertisement:**\n - If you are a server booster at PL5, you can get information about TFC advertisement format.",
                 inline=False
             )
-            # - **Ranking Up**\n - Information about how to rank up and rank requirements.\n
             embed.set_image(url=config.INFORMATION_PANEL_BANNER)
 
             await ctx.message.delete()
             await ctx.send(embed=embed, view=InformationPanelView())
+            return
+        
+        # if arg == 'locations':
+        #     embed = discord.Embed(
+        #         title="Task Force \"Conquerors\" Locations",
+        #         description="# Locations\nLocations are the various points of interests found around Ronograd Island, the setting of the Openworld game mode. Though some locations are safe and quiet, most are controlled by the **Patriots of Democracy** and **Ronograd Liberation Front**, the primary antagonists of BRM5. Open world's gameplay is focused around attacking these locations, liberating them from the **PoD** and **RLF**'s control, and repelling enemy counterattacks.",
+        #         color=config.TFC_GOLD
+        #     )
+        #     embed.add_field(
+        #         name="__**Available Location Categories:**__",
+        #         value="- Friendly (3)\n- Neutral (1)\n- Hostile (11)\n- Special (1)",
+        #         inline=False
+        #     )
+        #     embed.set_image(url=config.LOCATIONS_BANNER)
+
+        #     await ctx.message.delete()
+        #     await ctx.send(embed=embed, view=LocationsPanelView())
+        #     return
 
         if arg == 'hierarchy':
+            leader_ranks = ""
+            officer_ranks = ""
+            wo_ranks = ""
+            senior_enlisted_ranks = ""
+            enlisted_ranks = ""
+
+            rank_list = [i for i in RANK_LIST]
+            rank_list.reverse()
+
+            for rank in rank_list:
+                role = ctx.guild.get_role(RANKS[rank]['role'])
+                emoji = '' if not RANKS[rank]['emoji'] else RANKS[rank]['emoji']
+                                
+                if rank == 'O4' or rank == 'O5':
+                    leader_ranks += f"{emoji} {role.mention}\n"
+                
+                if rank.startswith('O') and (rank != 'O4' and rank != 'O5'):
+                    officer_ranks += f"{emoji} {role.mention}\n"
+                
+                if rank.startswith('W') or rank.startswith('C'):
+                    wo_ranks += f"{emoji} {role.mention}\n"
+                
+                if rank.startswith('SE'):
+                    senior_enlisted_ranks += f"{emoji} {role.mention}\n"
+                                
+                if rank.startswith('E'):
+                    enlisted_ranks += f"{emoji} {role.mention}\n"
+
             embed = discord.Embed(
                 title="Task Force \"Conquerors\" Hierarchy",
-                description="### __Leaders:__\n<:MajorGeneral:1144618939884765325> <@&1115990476575748137> \n<:BrigadierGeneral:1144618902278651994> <@&1115990540618584116> \n### __Officers:__\n<:Colonel:1144618914484072620> <@&1116021943469096970> \n<:LieutenantColonel:1144618933928865932> <@&1116021940537262091> \n<:Major:1144618946021052546> <@&1116021938649837750> \n<:Captain:1144618908578492518> <@&1116021935885783141> \n<:1stLieutenant:1144618888835907675> <@&1116021932844929084> \n<:2ndLieutenant:1144618895492259971> <@&1116021930466758676> \n<:Overseer:1144618963666481222> <@&1116021918663983285>\n### __Warrant Officers__:\n<:WarrantOfficer5:1144748295185506494> <@&1144652427165978755>\n<:WarrantOfficer4:1144748288025833613> <@&1144652412439769149>\n<:WarrantOfficer3:1144748279490433197> <@&1144652398577598545>\n<:WarrantOfficer2:1144748273626796032> <@&1144652373214634004>\n<:WarrantOfficer1:1144748269382160384> <@&1144652314498564268>\n### __SNCOs:__\n<:SergeantMajor:1144618870431305829> <@&1133109108854243408> \n<:FirstSergeant:1144618927423508500> <@&1133108178314330242> \n<:MasterSergeant:1144618957874151535> <@&1116021913303658598>\n### __NCOs:__\n<:StaffSergeant:1144618882519269426> <@&1116021911000973362>\n<:Sergeant:1144618876282339369> <@&1133107162571346021> \n<:MasterCorporal:1144618952564150414> <@&1116021905338662933> \n<:Corporal:1144618920825852064> <@&1116021902465581107>\n### __Enlisted:__\n<:LanceCorporal:1144618969643364392> <@&1144661908037849209>\n<:PrivateFirstClass:1144618856476848289> <@&1116021897822486558>\n<:Private:1144742173389103115> <@&1116021894576099438>\n\n<:Recruit:1144742169060573354> <@&1116062055410180136>",
+                description=f"### __Leaders:__\n{leader_ranks}### __Officers:__\n{officer_ranks}### __Warrant Officers__:\n{wo_ranks}### __Senior Enlisted:__\n{senior_enlisted_ranks}### __Enlisted:__\n{enlisted_ranks}",
                 color=config.TFC_GOLD
             )
             embed.set_image(url=config.HIERARCHY_BANNER)
 
             await ctx.message.delete()
             await ctx.send(embed=embed, view=HierarchyMenuView())
+            return
 
         else:
             await ctx.message.delete()
             return
+
+    @commands.command(name="return_request")
+    async def return_promotion_request(self, ctx: commands.Context, user: discord.Member):
+        if user is None:
+            return
+    
+        self.database.execute("DELETE FROM PromotionRequests WHERE user_id = ?", (user.id,)).connection.commit()
+
+        await ctx.reply(f"Promotion request sent by **{user.name}** has been returned.")
+        return
+    
+    @commands.command(name="register")
+    @commands.is_owner()
+    async def _register(self, ctx: commands.Context):
+        # for user in ctx.guild.members:
+        #     if user.nick:
+        #         if '"' in user.nick:
+        #             callsign = user.nick.split('"')[1]
+        #             name = user.nick.split('"')[2][1:]
+        #         else:
+        #             callsign = user.nick.split(' ')[len(user.nick.split(' '))-1]
+        #             name = None
+
+        #         self.database.execute(
+        #             """
+        #                 INSERT INTO UserData (user_id, points, callsign, name)
+        #                 VALUES (?, 0, ?, ?)
+        #                 ON CONFLICT (user_id) DO UPDATE SET
+        #                 callsign = ?, name = ? WHERE user_id = ?
+        #             """,
+        #             (
+        #                 user.id,
+        #                 callsign,
+        #                 name,
+        #                 callsign,
+        #                 name,
+        #                 user.id,
+        #             )
+        #         ).connection.commit()
+        #         print(user.name, callsign, name)
+
+        # data = self.database.execute("SELECT user_id FROM UserData").fetchall()
+        # enlisted_role = ctx.guild.get_role(config.ENLISTED_ROLE_ID)
+        # for entry in data:
+        #     user = ctx.guild.get_member(int(entry[0]))
+        #     if user is None:
+        #         self.database.execute("DELETE FROM UserData WHERE user_id = ?", (entry[0],)).connection.commit()
+            
+        #     else:
+        #         if enlisted_role in user.roles:
+        #             pass
+        #         else:
+        #             self.database.execute("DELETE FROM UserData WHERE user_id = ?", (entry[0],)).connection.commit()
+
+        for member in ctx.guild.members:
+            for i in config.RANK_LIST:
+                role = ctx.guild.get_role(config.RANKS[i]["role"])
+                if role in member.roles:
+                    self.database.execute("INSERT INTO UserData (user_id, rank) VALUES (?,? ) ON CONFLICT (user_id) DO UPDATE SET rank = ? WHERE user_id = ?", (member.id, i, i, member.id,)).connection.commit()
+                    print("Updadted for {}".format(member.display_name))
+                    await asyncio.sleep(0.75)
+
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(test(bot))

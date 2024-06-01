@@ -5,10 +5,12 @@ import sqlite3
 
 from discord.ext import commands
 from Interface.PromotionRequest import PromotionRequestManage
+from Interface.CallsignChangeView import CallsignUpdateView
 from Interface.ApplicationButtons import ApplicationButtons
 from Interface.InformationPanel import InformationPanelView
 from Interface.InteractionMenu import InteractionMenuView
 from Interface.InformationButtons import InformationView
+from Interface.LocationsPanel import LocationsPanelView
 from Interface.QuestionsView import QuestionManageView
 from Interface.SelfrolesMenu import SelfrolesMenuView
 from Interface.HierarchyMenu import HierarchyMenuView
@@ -31,7 +33,9 @@ class Bot(commands.Bot):
         self.add_view(InformationPanelView())
         self.add_view(InteractionMenuView())
         self.add_view(ApplicationButtons())
+        self.add_view(CallsignUpdateView())
         self.add_view(QuestionManageView())
+        self.add_view(LocationsPanelView())
         self.add_view(SelfrolesMenuView())
         self.add_view(HierarchyMenuView())
         self.add_view(InformationView())
@@ -51,9 +55,21 @@ class Bot(commands.Bot):
             '''
         ).execute(
             '''
+                CREATE TABLE IF NOT EXISTS CallsignRequests (
+                    user_id INTEGER,
+                    reason TEXT,
+                    old_callsign TEXT,
+                    new_callsign TEXT,
+                    PRIMARY KEY (user_id)
+                )
+            '''
+        ).execute(
+            '''
                 CREATE TABLE IF NOT EXISTS UserData (
                     user_id INTEGER,
-                    points INTEGER,
+                    points INTEGER DEFAULT 0,
+                    callsign TEXT,
+                    name TEXT,
                     PRIMARY KEY (user_id)
                 )
             '''

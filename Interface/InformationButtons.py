@@ -31,7 +31,10 @@ class InformationView(View):
                 await interaction.response.send_modal(ApplicationModal(username=data['cachedUsername']))
                 
             else:
-                await interaction.response.send_message(embed=discord.Embed(description="{} **Something went wrong!**\n\n**Error Code:** `{}`".format(config.ERROR_EMOJI, response.status_code), color=discord.Color.red()).set_footer(text="Please report the issue along side the error code."), view=ReportButtonView(), ephemeral=True)
+                try:
+                    await interaction.response.send_message(embed=discord.Embed(description="{} **Something went wrong!**\n\n**Error Code:** `{}`".format(config.ERROR_EMOJI, response.status_code), color=discord.Color.red()).set_footer(text="Please report the issue along side the error code."), view=ReportButtonView(), ephemeral=True)
+                except:
+                    await interaction.channel.send(content=interaction.user.mention, embed=discord.Embed(description="{} **Something went wrong!**\n\n**Error Code:** `{}`".format(config.ERROR_EMOJI, response.status_code), color=discord.Color.red()).set_footer(text="Please report the issue along side the error code."), view=ReportButtonView())
 
         else:
             await interaction.response.send_message(embed=discord.Embed(description="{} **You aren't authorized to do that!**".format(config.ERROR_EMOJI), color=config.TFC_GOLD), ephemeral=True)

@@ -1,5 +1,6 @@
 import re
 import config
+import sqlite3
 import discord
 import datetime
 
@@ -10,6 +11,7 @@ from Interface.ApplicationButtons import ApplicationButtons
 class ApplicationModal(Modal, title="Task Force Application Form"):
     def __init__(self, username: str):
         self.username = username
+        self.database = sqlite3.connect("./Databases/data.sqlite")
         super().__init__(timeout=None)
     
         # self.question_one = TextInput(
@@ -41,12 +43,10 @@ class ApplicationModal(Modal, title="Task Force Application Form"):
         )
 
         self.question_five = TextInput(
-            label="Do you agree to our rules?",
-            style=TextStyle.short,
-            placeholder="Type Y or N",
+            label="What are your expectations from us?",
+            style=TextStyle.long,
+            placeholder="Write atleast 2-3 sentences...",
             required=True,
-            min_length=1,
-            max_length=1
         )
 
         # self.add_item(self.question_one)
@@ -56,14 +56,15 @@ class ApplicationModal(Modal, title="Task Force Application Form"):
         self.add_item(self.question_five)
 
     async def on_submit(self, interaction: discord.Interaction):
-        callsign_pattern = r'^[a-zA-Z]+$'
+        callsign_pattern = r'^[A-Z][a-zA-Z]*$'
         match = re.match(callsign_pattern, self.question_three.value)
         if not match:
             await interaction.response.send_message(embed=discord.Embed(description="{} Unable to process application!\n\n**Reason:** Invalid callsign format.".format(config.ERROR_EMOJI), color=discord.Color.red()).set_footer(text="Callsign must contains alphabets only! Spaces, numbers and symbols aren't allowed."), ephemeral=True)
             return
-        
-        if self.question_five.value.lower() != 'y' and self.question_five.value.lower() != 'n':
-            await interaction.response.send_message(embed=discord.Embed(description="{} Unable to process application!\n\n**Reason:** Invalid character typed for agreeing to our rules.".format(config.ERROR_EMOJI), color=discord.Color.red()).set_footer(text="Only answer with 'Y' or 'N'"), ephemeral=True)
+    
+        data = self.database.execute("SELECT callsign FROM UserData WHERE callsign = ?", (self.question_three.value.capitalize(),)).fetchone()
+        if data is not None:
+            await interaction.response.send_message(content=f"{config.ERROR_EMOJI} Callsign **({self.question_three.value})** is already taken. Please apply again and choose other callsign.", ephemeral=True)
             return
 
         application_embed = discord.Embed(
@@ -100,7 +101,7 @@ class ApplicationModal(Modal, title="Task Force Application Form"):
             inline=False
         )
         application_embed.add_field(
-            name="{} Do you understand the rules that are inplace, and do you understand that breaking them will lead to punishments at the discretion of officers?".format(config.ARROW_EMOJI),
+            name="{} What are your expectations from us?".format(config.ARROW_EMOJI),
             value=f"> {self.question_five.value}",
             inline=False
         )
