@@ -45,7 +45,7 @@ class ArmorySelectMenu(Select):
             )
             embed.add_field(
                 name="__Standard Helmets:__",
-                value="1. MICH 2000 *$0*\n2. INTEL BALLISTIC 3.0 *$1400*\n3. MARITIME BALLISTIC *$1400*\n4. BOONIE *$20-30*\n\n- *Helmet must be tan or varicam.*\n- *You may customize your helmet to any realistic degree.*",
+                value="1. MICH 2000 *$0*\n2. INTEL BALLISTIC 3.0 *$1200*\n3. MARITIME BALLISTIC *$1400*\n4. BOONIE *$20-30*\n\n- *Helmet must be tan or varicam.*\n- *You may customize your helmet to any realistic degree.*",
                 inline=False
             )
             embed.add_field(
@@ -77,7 +77,7 @@ class ArmorySelectMenu(Select):
             )
             embed.add_field(
                 name="__Standard Uniform:__",
-                value="1. US PCU Block I L5 *$300*\n2. AC Combat (VariCam) *$300*",
+                value="1. US PCU Block I L5 *$300*\n2. AC Combat (VariCam) *$600*",
                 inline=False
             )
             embed.add_field(

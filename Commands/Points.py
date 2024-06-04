@@ -38,7 +38,7 @@ class Points(commands.Cog):
             for match in matches:
                 user = interaction.guild.get_member(int(match))
                 if user:
-                    self.database.execute("INSERT INTO UserData VALUES (?, ?) ON CONFLICT (user_id) DO UPDATE SET points = points + ? WHERE user_id = ?", (user.id, amount, amount, user.id,)).connection.commit()
+                    self.database.execute("INSERT INTO UserData (user_id, points) VALUES (?, ?) ON CONFLICT (user_id) DO UPDATE SET points = points + ? WHERE user_id = ?", (user.id, amount, amount, user.id,)).connection.commit()
                     data += "{}. {}\n".format(counter, user.mention)
                     counter += 1
                 
@@ -90,7 +90,7 @@ class Points(commands.Cog):
                     else:
                         updated_amount = current_points - amount
 
-                    self.database.execute("INSERT INTO UserData VALUES (?, ?) ON CONFLICT (user_id) DO UPDATE SET points = ? WHERE user_id = ?", (user.id, 0, updated_amount, user.id,)).connection.commit()
+                    self.database.execute("INSERT INTO UserData (user_id, points) VALUES (?, ?) ON CONFLICT (user_id) DO UPDATE SET points = ? WHERE user_id = ?", (user.id, 0, updated_amount, user.id,)).connection.commit()
                     data += "{}. {}\n".format(counter, user.mention)
                     counter += 1
                 
@@ -126,7 +126,7 @@ class Points(commands.Cog):
 
             data = self.database.execute("SELECT points FROM UserData WHERE user_id = ?", (user.id,)).fetchone()
             if data is None:
-                self.database.execute("INSERT INTO UserData VALUES (?, ?)", (user.id, 0,)).connection.commit()
+                self.database.execute("INSERT INTO UserData (user_id, points) VALUES (?, ?)", (user.id, 0,)).connection.commit()
                 points = 0
             else:
                 points = int(data[0])
