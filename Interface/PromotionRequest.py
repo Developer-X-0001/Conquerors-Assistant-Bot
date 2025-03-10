@@ -24,18 +24,6 @@ class PromotionSelectMenu(Select):
         if current_rank.startswith('E'):
             available_ranks = RANK_LIST[RANK_LIST.index(current_rank)+1:5]
 
-        if current_rank.startswith('N'):
-            available_ranks = RANK_LIST[RANK_LIST.index(current_rank)+1:10]
-
-        if current_rank.startswith('M'):
-            available_ranks = RANK_LIST[RANK_LIST.index(current_rank)+1:14]
-
-        if current_rank.startswith('W'):
-            available_ranks = RANK_LIST[RANK_LIST.index(current_rank)+1:19]
-        
-        if current_rank.startswith('O'):
-            available_ranks = RANK_LIST[RANK_LIST.index(current_rank)+1:26]
-
         for rank in available_ranks:
             requirement = f"{RANKS[rank]['points']} Points"
             

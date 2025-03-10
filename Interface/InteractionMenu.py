@@ -52,8 +52,13 @@ class InteractionSelectMenu(Select):
                 await interaction.followup.send(embed=discord.Embed(description="{} **You're already at the highest or the 2nd highest rank!**".format(config.ERROR_EMOJI), color=config.TFC_GOLD), ephemeral=True)
                 return
             
-            await interaction.followup.send(embed=discord.Embed(description="{} **Please choose a rank that you want to request.**\nAlso make sure your DMs are open, because the decision on your request will be sent to your DMs.".format(config.PROMOTION_EMOJI), color=config.TFC_GOLD), view=PromotionRequestView(interaction.user), ephemeral=True)
-            return
+            if current_rank.startswith('E'):
+                await interaction.followup.send(embed=discord.Embed(description="{} **Please choose a rank that you want to request.**\nAlso make sure your DMs are open, because the decision on your request will be sent to your DMs.".format(config.PROMOTION_EMOJI), color=config.TFC_GOLD), view=PromotionRequestView(interaction.user), ephemeral=True)
+                return
+            
+            else:
+                await interaction.followup.send(embed=discord.Embed(description="{} **You can't create a promotion request.**".format(config.ERROR_EMOJI), color=config.TFC_GOLD), ephemeral=True)
+                return
         
         if value == 2:
             await interaction.response.send_modal(QuestionModal())
@@ -64,7 +69,7 @@ class InteractionSelectMenu(Select):
             await interaction.response.edit_message(view=InteractionMenuView())
             data = database.execute("SELECT points FROM UserData WHERE user_id = ?", (interaction.user.id,)).fetchone()
             if data is None:
-                database.execute("INSERT INTO UserData VALUES (?, ?)", (interaction.user.id, 0,)).connection.commit()
+                database.execute("INSERT INTO UserData (user_id, points) VALUES (?, ?)", (interaction.user.id, 0,)).connection.commit()
                 points = 0
             else:
                 points = int(data[0])

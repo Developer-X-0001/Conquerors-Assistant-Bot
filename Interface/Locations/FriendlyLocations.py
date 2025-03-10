@@ -89,8 +89,20 @@ class DetailedGoBackView(View):
         embed = interaction.message.embeds[0]
 
         if embed.title == "Forward Operating Base (FOB)":
-            await interaction.response.send_message(embed=discord.Embed(description="Bird\'s Eye View isn't available for Forward Operating Base (FOB) yet.", color=discord.Color.red()), ephemeral=True)
-            return
+            if self.switch_img_btn.label == "Switch to Bird\'s Eye View":
+                embed.set_image(url=config.FOB_MAP_IMAGE)
+                self.switch_img_btn.label = 'Switch to Front View'
+                await interaction.response.edit_message(embed=embed, view=self)
+                return
+            
+            if self.switch_img_btn.label == 'Switch to Front View':
+                await interaction.response.send_message(embed=discord.Embed(description="Front View isn't available for Forward Operating Base (FOB) yet.", color=discord.Color.red()), ephemeral=True)
+                return
+            
+                embed.set_image(url=config.FOB_IMAGE)
+                self.switch_img_btn.label = "Switch to Bird\'s Eye View"
+                await interaction.response.edit_message(embed=embed, view=self)
+                return
 
         if embed.title == "Sochraina City":
             if self.switch_img_btn.label == "Switch to Bird\'s Eye View":

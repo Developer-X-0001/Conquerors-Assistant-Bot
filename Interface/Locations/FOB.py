@@ -5,7 +5,7 @@ FOBEmbed = discord.Embed(
     title="Forward Operating Base (FOB)",
     description="The FOB, or Forward Operating Base, is located at the very south of Ronograd Island. It acts as a main hub and is one of three spawn locations where players may spawn in, resupply on ammunition and medical supplies, spawn in vehicles, and bring hostages. This is the only base in which the A-10 can be spawned in, due to it having the only airfield in the map.",
     color=discord.Color.green()
-).set_image(url=config.FOB_MAP_IMAGE)
+).set_image(url=None)
 
 FOBDetailedEmbed = discord.Embed(
     title="Forward Operating Base (FOB)",
@@ -15,7 +15,7 @@ FOBDetailedEmbed = discord.Embed(
     name="__Points of Interest:__",
     value="- The Command Center\n2. Vehicle Depot\n3. Helicopter Landing Zone\n4. Hangars\n5. Killhouse\n6. Vehicle Workshop\n7. Shooting Range\n8. Runway\n9. Refugee Processing Camps",
     inline=False
-).set_image(url=config.FOB_MAP_IMAGE)
+).set_image(url=None)
 
 FOBPointOfInterests = [
     discord.SelectOption(label="The Command Center", value=0),

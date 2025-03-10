@@ -6,6 +6,7 @@ import asyncio
 
 from discord.ext import commands
 from config import RANKS, RANK_LIST
+from Functions.Webhooks import sql_update
 from Interface.ArmoryMenu import ArmoryMenuView
 from Interface.SelfrolesMenu import SelfrolesMenuView
 from Interface.HierarchyMenu import HierarchyMenuView
@@ -58,7 +59,7 @@ class test(commands.Cog):
             )
             embed.add_field(
                 name="{} Desired callsign?".format(config.ARROW_EMOJI),
-                value="```\nWhat's your desired callsign? It must consists on only one word without any spaces.\n```",
+                value="```\nWhat's your desired callsign? It must start and contain one capital letter. Also shouldn't contain a period/dash/space\n```",
                 inline=False
             )
             embed.add_field(
@@ -279,6 +280,16 @@ class test(commands.Cog):
                     print("Updadted for {}".format(member.display_name))
                     await asyncio.sleep(0.75)
 
+    @commands.command(name="ping")
+    @commands.is_owner()
+    async def _ping(self, ctx: commands.Context):
+        await ctx.reply(content=f"📶 **Latency:** `{round(self.bot.latency * 1000)}`ms")
+
+    @commands.command(name="test")
+    @commands.is_owner()
+    async def _test(self, ctx: commands.Context):
+        await sql_update()
+        await ctx.reply("Done")
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(test(bot))

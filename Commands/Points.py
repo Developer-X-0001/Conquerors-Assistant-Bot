@@ -5,6 +5,7 @@ import discord
 
 from discord.ext import commands
 from discord import app_commands
+from Functions.Webhooks import sql_update, sql_update_confirm
 
 class Points(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -38,7 +39,14 @@ class Points(commands.Cog):
             for match in matches:
                 user = interaction.guild.get_member(int(match))
                 if user:
+                    await sql_update(
+                        reason="Points added to user",
+                        code="INSERT INTO UserData (user_id, points) VALUES (?, ?) ON CONFLICT (user_id) DO UPDATE SET points = points + ? WHERE user_id = ?",
+                        queries=[("user_id", user.id), ("points", amount)],
+                        color_code=1
+                    )
                     self.database.execute("INSERT INTO UserData (user_id, points) VALUES (?, ?) ON CONFLICT (user_id) DO UPDATE SET points = points + ? WHERE user_id = ?", (user.id, amount, amount, user.id,)).connection.commit()
+                    await sql_update_confirm()
                     data += "{}. {}\n".format(counter, user.mention)
                     counter += 1
                 
@@ -90,7 +98,14 @@ class Points(commands.Cog):
                     else:
                         updated_amount = current_points - amount
 
+                    await sql_update(
+                        reason="Points removed from user",
+                        code="INSERT INTO UserData (user_id, points) VALUES (?, ?) ON CONFLICT (user_id) DO UPDATE SET points = ? WHERE user_id = ?",
+                        queries=[("user_id", user.id), ("points", amount)],
+                        color_code=1
+                    )
                     self.database.execute("INSERT INTO UserData (user_id, points) VALUES (?, ?) ON CONFLICT (user_id) DO UPDATE SET points = ? WHERE user_id = ?", (user.id, 0, updated_amount, user.id,)).connection.commit()
+                    await sql_update_confirm()
                     data += "{}. {}\n".format(counter, user.mention)
                     counter += 1
                 
@@ -126,7 +141,14 @@ class Points(commands.Cog):
 
             data = self.database.execute("SELECT points FROM UserData WHERE user_id = ?", (user.id,)).fetchone()
             if data is None:
+                await sql_update(
+                    reason="Points added to user",
+                    code="INSERT INTO UserData (user_id, points) VALUES (?, ?)",
+                    queries=[("user_id", user.id), ("points", 0)],
+                    color_code=1
+                )
                 self.database.execute("INSERT INTO UserData (user_id, points) VALUES (?, ?)", (user.id, 0,)).connection.commit()
+                await sql_update_confirm()
                 points = 0
             else:
                 points = int(data[0])

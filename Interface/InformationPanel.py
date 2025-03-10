@@ -42,7 +42,21 @@ class InformationPanelView(View):
 
         embed = discord.Embed(
             title="Task Force \"Conquerors\" Rank-Up Conditions",
-            description=f"## Points System\n\n**__Operations:__**\n2 points = 1 hour\n3 points = 2 hours\n4 points = 3 hours\n\n**__Planned/Joint Operations:__**\n4 points = 1 hour\n6 points = 2 hours\n8 points = 3 hours\n\n**__Board Process (Steps):__**\n1. Receive Recommendations from NCO's (ranks SE4 - SE6).\n2. An SE6 will determine Yes or No.\n3. A board of SE8's and SE9's will interview you and vote. 2/3 majority 'yes' means you get to proceed.\n4. Evaluation and or Enrollment into NCOA.\n\n{enlisted_ranks}{senior_enlisted_ranks}{wo_ranks}{officer_ranks}",
+            description=f"## Points System\
+            \n\n**__Operations:__**\
+            \n2 points = 1 hour\
+            \n3 points = 2 hours\
+            \n4 points = 3 hours\
+            \n\n**__Planned/Joint Operations:__**\
+            \n4 points = 1 hour\
+            \n6 points = 2 hours\
+            \n8 points = 3 hours\
+            \n\n**__Board Process (Steps):__**\
+            \n1. Complete the NCO Applications or be handpicked.\
+            \n2. Go through and complete an Interview.\
+            \n3. Receive a majority vote from interviewers to proceed.\
+            \n4. Evaluation and or Enrollment into NCOA.\
+            \n\n{enlisted_ranks}{senior_enlisted_ranks}{wo_ranks}{officer_ranks}",
             color=config.TFC_GOLD
         )
         embed.set_image(url=config.RANKING_UP_BANNER)

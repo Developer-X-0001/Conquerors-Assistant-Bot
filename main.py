@@ -24,7 +24,8 @@ class Bot(commands.Bot):
         super().__init__(
             command_prefix=config.PREFIX,
             intents=intents,
-            application_id=config.APPLICATION_ID
+            application_id=config.APPLICATION_ID,
+            activity=discord.Game(name="under development")
         )
 
     async def setup_hook(self):

@@ -22,13 +22,14 @@ class CheckLOAs(commands.Cog):
         if data != []:
             for entry in data:
                 user = guild.get_member(int(entry[0]))
-                ending_time = int(entry[1])
-                current_time = round(datetime.datetime.now().timestamp())
+                if user:
+                    ending_time = int(entry[1])
+                    current_time = round(datetime.datetime.now().timestamp())
 
-                if current_time > ending_time:
-                    await user.remove_roles(loa_role)
-                    await on_topic_channel.send(content=user.mention, embed=discord.Embed(description="Welcome back! Your return is a delight. We're eager to resume teamwork and make progress together. If you need to catch up or share updates, feel free to connect. Here's to a productive time ahead!", color=config.TFC_GOLD).set_image(url=config.TFC_BANNER))
-                    self.database.execute("DELETE FROM UserLOAs WHERE user_id = ?", (user.id,)).connection.commit()
+                    if current_time > ending_time:
+                        await user.remove_roles(loa_role)
+                        await on_topic_channel.send(content=user.mention, embed=discord.Embed(description="Welcome back! Your return is a delight. We're eager to resume teamwork and make progress together. If you need to catch up or share updates, feel free to connect. Here's to a productive time ahead!", color=config.TFC_GOLD).set_image(url=config.TFC_BANNER))
+                        self.database.execute("DELETE FROM UserLOAs WHERE user_id = ?", (user.id,)).connection.commit()
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(CheckLOAs(bot))

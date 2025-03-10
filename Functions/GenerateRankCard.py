@@ -8,7 +8,7 @@ def generate_rank_card(user: discord.Member):
     # profile = Editor("assets/pfp.png").resize((200, 200)).circle_image()
 
     # For profile to use users profile picture load it from url using the load_image/load_image_async function
-    profile_image = load_image(str(user.avatar.url))
+    profile_image = load_image(str(user.display_avatar.url))
     profile = Editor(profile_image).resize((200, 200)).circle_image()
 
 

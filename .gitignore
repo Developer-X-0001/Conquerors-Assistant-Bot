@@ -1,10 +1,6 @@
 /.vscode
-/config.py
-/__pycache__
-Assets
-GenerateIDCard.py
+config.py
+__pycache__
 *.zip
 test.py
 pfp.png
-*.sqlite
-__pycache__

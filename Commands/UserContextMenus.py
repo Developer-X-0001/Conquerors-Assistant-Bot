@@ -5,6 +5,7 @@ import asyncio
 
 from discord.ext import commands
 from discord import app_commands
+from Functions.Webhooks import sql_update, sql_update_confirm
 
 class UserContextMenu(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -31,6 +32,13 @@ class UserContextMenu(commands.Cog):
             RANKS = config.RANKS
             RANK_LIST = config.RANK_LIST
             
+            await sql_update(
+                reason="Checking user info",
+                code="INSERT OR IGNORE INTO UserData (user_id, callsign, rank) VALUES (?, ?, ?)",
+                queries=[("user_id", user.id), ("callsign", callsign), ("rank", "E0")],
+                color_code=1
+            )
+            self.database.execute("INSERT OR IGNORE INTO UserData (user_id, callsign, rank) VALUES (?, ?, ?)", (user.id, callsign, 'E0')).connection.commit()
             data = self.database.execute("SELECT callsign, name, rank FROM UserData WHERE user_id = ?", (user.id,)).fetchone()
             callsign = data[0]
             name = data[1] if data[1] else None
@@ -88,6 +96,7 @@ class UserContextMenu(commands.Cog):
             RANKS = config.RANKS
             RANK_LIST = config.RANK_LIST
 
+            self.database.execute("INSERT OR IGNORE INTO UserData (user_id, callsign, rank) VALUES (?, ?, ?)", (user.id, callsign, 'E0')).connection.commit()
             data = self.database.execute("SELECT callsign, name, rank FROM UserData WHERE user_id = ?", (user.id,)).fetchone()
             callsign = data[0]
             name = data[1] if data[1] else None

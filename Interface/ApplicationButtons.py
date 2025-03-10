@@ -60,17 +60,31 @@ class ApplicationButtons(View):
             self.accept_button.style = ButtonStyle.green
             self.accept_button.emoji = config.DONE_EMOJI
 
-            self.database.execute("INSERT INTO UserData (user_id, callsign, rank) VALUES (?, ?, ?)", (user.id, callsign, 'E0')).connection.commit()
-            application_embed.set_footer(text="Application accepted!")
-            await interaction.message.edit(embed=application_embed, view=self)
-            welcome_embed = discord.Embed(
-                title="Welcome to Task Force \"Conquerors\"",
-                description="Welcome to Task Force Conquerors! Your equipment and gear will be down below in the recruitment category in {}. If you have any questions, please put it in the Help desk. Thank you for joining!".format(armory_channel.mention),
-                color=config.TFC_GOLD
-            )
-            welcome_embed.set_image(url=config.WELCOME_BANNER)
-            await on_topic_channel.send(content=user.mention, embed=welcome_embed)
-            await logs_channel.send(embed=discord.Embed(description="{} has accepted {}'s application.".format(interaction.user.mention, interaction.message.mentions[0].mention), color=config.TFC_GOLD, timestamp=datetime.datetime.now()))
+            try:
+                self.database.execute("INSERT INTO UserData (user_id, callsign, rank) VALUES (?, ?, ?)", (user.id, callsign, 'E0')).connection.commit()
+                application_embed.set_footer(text="Application accepted!")
+                await interaction.message.edit(embed=application_embed, view=self)
+                welcome_embed = discord.Embed(
+                    title="Welcome to Task Force \"Conquerors\"",
+                    description="Welcome to Task Force Conquerors! Your equipment and gear will be down below in the recruitment category in {}. If you have any questions, please put it in the Help desk. Thank you for joining!".format(armory_channel.mention),
+                    color=config.TFC_GOLD
+                )
+                welcome_embed.set_image(url=config.WELCOME_BANNER)
+                await on_topic_channel.send(content=user.mention, embed=welcome_embed)
+                await logs_channel.send(embed=discord.Embed(description="{} has accepted {}'s application.".format(interaction.user.mention, interaction.message.mentions[0].mention), color=config.TFC_GOLD, timestamp=datetime.datetime.now()))
+            except Exception as e:
+                await interaction.message.edit(view=ErrorView())
+                error_logs_channel = interaction.guild.get_channel(config.ERROR_LOGS_CHANNEL_ID)
+                error_embed = discord.Embed(
+                    title="Error Report",
+                    color=config.TFC_GOLD
+                )
+                error_embed.add_field(
+                    name="__Error Details:__",
+                    value="```\n{}\n```".format(e)
+                )
+                await error_logs_channel.send(content=interaction.client.application.owner.mention, embed=error_embed)
+                return
         else:
             await interaction.response.send_message(embed=discord.Embed(description="{} **You aren't authorized to do that!**".format(config.ERROR_EMOJI), color=config.TFC_GOLD), ephemeral=True)
             return
@@ -100,4 +114,12 @@ class UserNotAvailableView(View):
     
     @button(label="User isn't present in the server anymore!", emoji=config.ERROR_EMOJI, disabled=True)
     async def user_not_Avail(self, interaction: discord.Interaction, button: Button):
+        return
+
+class ErrorView(View):
+    def __init__(self):
+        super().__init__(timeout=None)
+    
+    @button(label="Something went wrong!", emoji=config.ERROR_EMOJI, disabled=True)
+    async def error_btn(self, interaction: discord.Interaction, button: Button):
         return
